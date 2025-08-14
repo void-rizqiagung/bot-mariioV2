@@ -1,6 +1,7 @@
 modules = ["nodejs-23", "nix", "postgresql-17"]
 
 [workflows]
+runButton = "WhatsApp Bot"
 
 [[workflows.workflow]]
 name = "run"
@@ -10,6 +11,15 @@ author = 46278443
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd bot-wa-custom && npm install && npm start "
+
+[[workflows.workflow]]
+name = "WhatsApp Bot"
+author = 46278443
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd bot-wa-custom && node server.js"
 
 [[ports]]
 localPort = 5000

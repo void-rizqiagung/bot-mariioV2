@@ -503,14 +503,18 @@
     <script src="dashboard.js"></script>
 
     <script>
-        // Initialize feather icons
-        feather.replace();
-
-        // Start dashboard
-        window.addEventListener('DOMContentLoaded', function() {
-            if (typeof Dashboard !== 'undefined') {
-                Dashboard.init();
+        // Initialize dashboard and Feather Icons when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inisialisasi Feather Icons dengan pengecekan
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+                console.log('✅ Feather icons berhasil dimuat');
+            } else {
+                console.warn('⚠️ Feather icons tidak tersedia');
             }
+
+            // Inisialisasi dashboard
+            window.dashboard = new Dashboard();
         });
     </script>
 </body>

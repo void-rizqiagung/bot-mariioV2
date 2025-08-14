@@ -332,11 +332,9 @@ class Dashboard {
                     Waiting for activity...
                 </div>
             `;
-            try {
-                if (typeof feather !== 'undefined') {
-                    feather.replace();
-                }
-            } catch (error) {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            } else {
                 console.warn('Feather icons not available:', error);
             }
             return;
@@ -362,11 +360,9 @@ class Dashboard {
         }).join('');
 
         feedElement.innerHTML = html;
-        try {
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        } catch (error) {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        } else {
             console.warn('Feather icons not available:', error);
         }
     }
@@ -483,11 +479,9 @@ class Dashboard {
                 Loading logs...
             </div>
         `;
-        try {
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        } catch (error) {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        } else {
             console.warn('Feather icons not available:', error);
         }
 
@@ -558,11 +552,9 @@ class Dashboard {
                 </td>
             </tr>
         `;
-        try {
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
-        } catch (error) {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        } else {
             console.warn('Feather icons not available:', error);
         }
 
@@ -576,11 +568,9 @@ class Dashboard {
                     </td>
                 </tr>
             `;
-            try {
-                if (typeof feather !== 'undefined') {
-                    feather.replace();
-                }
-            } catch (error) {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            } else {
                 console.warn('Feather icons not available:', error);
             }
         }, 1000);
