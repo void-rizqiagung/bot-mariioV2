@@ -77,8 +77,18 @@ class CommandHandler {
     const isQuestionPrompt = /^(apa|bagaimana|mengapa|kapan|dimana|siapa|berapa)/i.test(prompt);
     const hasUrl = /(https?:\/\/[^\s]+)/g.test(prompt);
     
-    // Indikator typing yang lebih natural
-    await whatsappService.sendPresenceUpdate('composing', chatId);
+    // Enhanced typing indicator dengan fallback handling
+    try {
+      await whatsappService.sendPresenceUpdate('composing', chatId);
+    } catch (presenceError) {
+      // Fallback ke sendTyping jika sendPresenceUpdate gagal
+      logger.warn('⚠️ Presence update failed, using fallback typing method', { error: presenceError.message });
+      try {
+        await whatsappService.sendTyping(chatId, true);
+      } catch (typingError) {
+        logger.warn('⚠️ All typing indicators failed, continuing without typing', { error: typingError.message });
+      }
+    }
     
     // Loading message yang dinamis berdasarkan jenis permintaan
     let loadingMessage;
@@ -93,25 +103,44 @@ class CommandHandler {
     const loadingAnimation = await whatsappService.sendAnimatedLoadingMessage(chatId, loadingMessage);
     
     try {
-      // Enhanced options berdasarkan konteks
+      // Enhanced options dengan resilient configuration
       const aiOptions = {
         userName: user.name || 'User',
         useGrounding: hasUrl || isQuestionPrompt, // Gunakan grounding untuk URL atau pertanyaan
-        maxRetries: 2
+        maxRetries: 3, // Increased retry attempts
+        timeout: 30000, // 30 second timeout
+        fallbackMode: true // Enable fallback responses
       };
 
-      // Generate response dengan error handling
+      // Generate response dengan comprehensive error handling
       const responseText = await geminiService.generateContextualResponse(prompt, aiOptions);
       
-      // Stop loading animation dan kirim response
+      // Stop loading animation dan kirim response dengan graceful fallback
       loadingAnimation.stop();
-      await whatsappService.sendPresenceUpdate('available', chatId);
       
-      // Kirim response dengan edit message untuk performa yang lebih baik
-      await whatsappService.sendMessage(chatId, { 
-        edit: loadingAnimation.message.key, 
-        text: responseText 
-      });
+      // Graceful presence update dengan fallback
+      try {
+        await whatsappService.sendPresenceUpdate('available', chatId);
+      } catch (presenceError) {
+        try {
+          await whatsappService.sendTyping(chatId, false);
+        } catch (typingError) {
+          // Silent fallback - continue without presence update
+          logger.warn('⚠️ All presence methods failed, continuing', { error: typingError.message });
+        }
+      }
+      
+      // Kirim response dengan edit message dan retry mechanism
+      try {
+        await whatsappService.sendMessage(chatId, { 
+          edit: loadingAnimation.message.key, 
+          text: responseText 
+        });
+      } catch (sendError) {
+        // Fallback: send as new message if edit fails
+        logger.warn('⚠️ Message edit failed, sending new message', { error: sendError.message });
+        await whatsappService.sendTextMessage(chatId, responseText);
+      }
 
       // Log interaksi untuk analytics
       logger.info('🤖 AI Interaction completed', {
@@ -119,34 +148,66 @@ class CommandHandler {
         userName: user.name || 'unknown',
         promptLength: prompt.length,
         hasUrl: hasUrl,
-        isQuestion: isQuestionPrompt
+        isQuestion: isQuestionPrompt,
+        responseLength: responseText?.length || 0
       });
 
     } catch (error) {
-      // Error handling yang lebih informatif
+      // Comprehensive error handling dengan detailed categorization
       loadingAnimation.stop();
-      await whatsappService.sendPresenceUpdate('available', chatId);
       
-      logger.error('💥 AI command failed', { 
-        error: error.message, 
-        userId: user.id,
-        prompt: prompt.substring(0, 100) + '...'
-      });
-      
-      let errorMessage = '❌ *Gagal Memproses Permintaan*\n\n';
-      
-      if (error.message.includes('rate limit')) {
-        errorMessage += '_Sistem sedang sibuk. Mohon tunggu beberapa saat sebelum mencoba lagi._\n\n⏰ *Estimasi waktu tunggu:* 1-2 menit';
-      } else if (error.message.includes('network')) {
-        errorMessage += '_Terjadi masalah koneksi. Mohon periksa koneksi internet Anda._\n\n🔄 *Solusi:* Coba lagi dalam beberapa saat';
-      } else {
-        errorMessage += '_Terjadi kesalahan sistem. Tim teknis telah diberitahu._\n\n💡 *Alternatif:* Coba dengan kata kunci yang lebih sederhana';
+      // Graceful presence cleanup
+      try {
+        await whatsappService.sendPresenceUpdate('available', chatId);
+      } catch (presenceError) {
+        try {
+          await whatsappService.sendTyping(chatId, false);
+        } catch (typingError) {
+          // Silent fallback
+        }
       }
       
-      await whatsappService.sendMessage(chatId, { 
-        edit: loadingAnimation.message.key, 
-        text: errorMessage 
+      logger.error('💥 AI command failed with detailed context', { 
+        error: error.message,
+        stack: error.stack, 
+        userId: user.id,
+        prompt: prompt.substring(0, 100) + '...',
+        hasUrl: hasUrl,
+        isQuestion: isQuestionPrompt
       });
+      
+      // Enhanced error classification dan user-friendly messages
+      let errorMessage = '❌ *Sistem AI Mengalami Gangguan*\n\n';
+      
+      if (error.message.includes('fetch failed') || error.message.includes('network')) {
+        errorMessage += '🌐 *Masalah Koneksi Internet*\n_Koneksi ke server AI terputus._\n\n🔄 *Solusi:*\n• Coba lagi dalam 30 detik\n• Pastikan koneksi internet stabil\n• Gunakan perintah yang lebih sederhana';
+      } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
+        errorMessage += '⏱️ *Batas Penggunaan Tercapai*\n_Server AI sedang sibuk melayani banyak permintaan._\n\n⏰ *Solusi:*\n• Tunggu 2-3 menit sebelum mencoba lagi\n• Gunakan perintah `/ping` untuk cek status';
+      } else if (error.message.includes('400') || error.message.includes('invalid')) {
+        errorMessage += '📝 *Format Permintaan Bermasalah*\n_Permintaan tidak dapat diproses oleh AI._\n\n💡 *Solusi:*\n• Gunakan bahasa yang lebih jelas\n• Hindari karakter khusus berlebihan\n• Coba dengan pertanyaan yang lebih spesifik';
+      } else if (error.message.includes('404')) {
+        errorMessage += '🔍 *Konten Tidak Ditemukan*\n_URL atau sumber yang diminta tidak tersedia._\n\n🌐 *Solusi:*\n• Periksa URL yang diberikan\n• Pastikan sumber masih aktif\n• Coba tanpa URL eksternal';
+      } else {
+        errorMessage += '⚙️ *Kesalahan Sistem Internal*\n_Terjadi gangguan pada sistem AI._\n\n🔧 *Solusi:*\n• Coba lagi dengan perintah sederhana\n• Hubungi admin jika masalah berlanjut\n• Gunakan `/status` untuk cek kesehatan sistem';
+      }
+      
+      // Tambahan troubleshooting info
+      errorMessage += `\n\n🆔 *Error ID:* \`${Date.now().toString(36)}\``;
+      
+      try {
+        await whatsappService.sendMessage(chatId, { 
+          edit: loadingAnimation.message.key, 
+          text: errorMessage 
+        });
+      } catch (sendError) {
+        // Ultimate fallback
+        logger.error('💥 Critical: Failed to send error message', { error: sendError.message });
+        try {
+          await whatsappService.sendTextMessage(chatId, '❌ *Sistem Error Kritis* - Hubungi administrator segera.');
+        } catch (criticalError) {
+          logger.error('💥 CRITICAL: Complete communication failure', { error: criticalError.message });
+        }
+      }
     }
   }
   

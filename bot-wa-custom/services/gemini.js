@@ -217,6 +217,14 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
       throw new Error('Gemini AI not initialized');
     }
 
+    // Enhanced options dengan default values
+    const {
+      maxRetries = 3,
+      timeout = 30000,
+      fallbackMode = true,
+      useGrounding = false
+    } = options;
+
     let tools = [];
     let responseType = 'general';
     
@@ -225,15 +233,23 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     const urls = prompt.match(urlRegex);
     
     if (urls && urls.length > 0) {
-      // Validasi semua URL yang ditemukan
+      // Validasi semua URL dengan timeout dan retry
       const validUrls = [];
       for (const url of urls) {
-        const isValid = await this.validateUrl(url);
-        if (isValid) {
-          validUrls.push(url);
-          logger.info(`✅ URL valid: ${url}`);
-        } else {
-          logger.warn(`❌ URL tidak valid atau tidak dapat diakses: ${url}`);
+        try {
+          const isValid = await Promise.race([
+            this.validateUrl(url),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('URL validation timeout')), 5000))
+          ]);
+          
+          if (isValid) {
+            validUrls.push(url);
+            logger.info(`✅ URL valid: ${url}`);
+          } else {
+            logger.warn(`❌ URL tidak valid: ${url}`);
+          }
+        } catch (urlError) {
+          logger.warn(`⚠️ URL validation error for ${url}: ${urlError.message}`);
         }
       }
       
@@ -244,63 +260,155 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
       } else {
         logger.warn('⚠️ Tidak ada URL valid yang ditemukan, menggunakan mode general.');
       }
-    } else if (options.useGrounding) {
+    } else if (useGrounding) {
       tools.push({ 'googleSearch': {} });
       responseType = 'search';
       logger.info('🔍 Menggunakan Google Search untuk riset web.');
     }
 
     const startTime = Date.now();
+    let lastError = null;
     
-    try {
-      const model = this.ai.getGenerativeModel({
-        model: this.modelName,
-        safetySettings: this.safetySettings,
-        generationConfig: this.generationConfig,
-        systemInstruction: this.systemInstruction,
-        tools: tools.length > 0 ? tools : undefined,
-      });
+    // Implement retry mechanism dengan exponential backoff
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        logger.info(`🔄 AI Generation attempt ${attempt}/${maxRetries}`, {
+          prompt: prompt.substring(0, 50) + '...',
+          responseType,
+          hasTools: tools.length > 0
+        });
 
-      const result = await model.generateContent(prompt);
-      const response = result.response;
-      const responseTime = Date.now() - startTime;
-      
-      const finalResponse = {
-        text: response.text(),
-        responseTime,
-        groundingAttributions: response.groundingAttributions,
-        error: null,
-      };
+        const model = this.ai.getGenerativeModel({
+          model: this.modelName,
+          safetySettings: this.safetySettings,
+          generationConfig: {
+            ...this.generationConfig,
+            maxOutputTokens: Math.max(2048, this.generationConfig.maxOutputTokens - (attempt - 1) * 1024) // Reduce tokens on retry
+          },
+          systemInstruction: this.systemInstruction,
+          tools: tools.length > 0 ? tools : undefined,
+        });
 
-      // Log performance metrics
-      logger.info(`🎯 AI Response generated`, {
-        responseType,
-        responseTime: `${responseTime}ms`,
-        hasGrounding: !!response.groundingAttributions?.length,
-        tokensUsed: response.usageMetadata?.totalTokenCount || 'N/A'
-      });
+        // Create timeout promise
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error(`Request timeout after ${timeout}ms`)), timeout)
+        );
 
-      // Gunakan format bubble chat yang lebih profesional
-      return this.formatProfessionalChatBubble(finalResponse, responseType, prompt);
+        // Race between generation and timeout
+        const result = await Promise.race([
+          model.generateContent(prompt),
+          timeoutPromise
+        ]);
+        
+        const response = result.response;
+        const responseTime = Date.now() - startTime;
+        
+        // Validate response
+        if (!response || !response.text || response.text().trim().length === 0) {
+          throw new Error('Empty response received from AI');
+        }
+        
+        const finalResponse = {
+          text: response.text(),
+          responseTime,
+          groundingAttributions: response.groundingAttributions,
+          error: null,
+          attempt: attempt
+        };
 
-    } catch (error) {
-      logger.error('💥 AI response generation failed', { 
-        error: error.message,
-        responseTime: `${Date.now() - startTime}ms`,
-        prompt: prompt.substring(0, 100) + '...'
-      });
-      
-      // Error handling yang lebih informatif
-      if (error.message.includes('400')) {
-        return '❌ *Permintaan Tidak Valid*\n\n_Format permintaan tidak sesuai. Mohon periksa kembali input Anda._\n\n💡 *Tip:* Gunakan bahasa yang lebih jelas dan spesifik.';
-      } else if (error.message.includes('404')) {
-        return '❌ *Sumber Tidak Ditemukan*\n\n_Konten yang diminta tidak dapat ditemukan atau sudah tidak tersedia._\n\n💡 *Tip:* Periksa kembali URL atau coba kata kunci yang berbeda.';
-      } else if (error.message.includes('rate limit')) {
-        return '⏱️ *Batas Penggunaan Tercapai*\n\n_Sistem sedang sibuk. Mohon tunggu beberapa saat sebelum mencoba lagi._';
-      } else {
-        return '❌ *Maaf, Terjadi Kesalahan*\n\n_Sistem AI tidak dapat memproses permintaan Anda saat ini._\n\n🔄 Silakan coba lagi dalam beberapa saat.';
+        // Log successful generation
+        logger.info(`🎯 AI Response generated successfully`, {
+          responseType,
+          responseTime: `${responseTime}ms`,
+          attempt: `${attempt}/${maxRetries}`,
+          hasGrounding: !!response.groundingAttributions?.length,
+          tokensUsed: response.usageMetadata?.totalTokenCount || 'N/A',
+          responseLength: finalResponse.text.length
+        });
+
+        // Return formatted response
+        return this.formatProfessionalChatBubble(finalResponse, responseType, prompt);
+
+      } catch (error) {
+        lastError = error;
+        const attemptTime = Date.now() - startTime;
+        
+        logger.warn(`⚠️ AI Generation attempt ${attempt}/${maxRetries} failed`, { 
+          error: error.message,
+          attemptTime: `${attemptTime}ms`,
+          willRetry: attempt < maxRetries
+        });
+        
+        // If not the last attempt, wait with exponential backoff
+        if (attempt < maxRetries) {
+          const backoffTime = Math.min(1000 * Math.pow(2, attempt - 1), 5000); // Max 5 seconds
+          logger.info(`⏳ Waiting ${backoffTime}ms before retry...`);
+          await new Promise(resolve => setTimeout(resolve, backoffTime));
+        }
       }
     }
+    
+    // All attempts failed - comprehensive error handling
+    const totalTime = Date.now() - startTime;
+    logger.error('💥 AI response generation failed after all retries', { 
+      error: lastError.message,
+      stack: lastError.stack,
+      totalTime: `${totalTime}ms`,
+      attempts: maxRetries,
+      prompt: prompt.substring(0, 100) + '...'
+    });
+    
+    // Enhanced error classification dengan fallback responses
+    if (lastError.message.includes('fetch failed') || lastError.message.includes('network') || lastError.message.includes('timeout')) {
+      if (fallbackMode) {
+        return this.generateFallbackResponse(prompt, 'network');
+      }
+      throw new Error('Network connection failed - please check internet connectivity');
+    } else if (lastError.message.includes('400') || lastError.message.includes('invalid')) {
+      if (fallbackMode) {
+        return this.generateFallbackResponse(prompt, 'invalid_request');
+      }
+      throw new Error('Invalid request format - please rephrase your question');
+    } else if (lastError.message.includes('404')) {
+      if (fallbackMode) {
+        return this.generateFallbackResponse(prompt, 'not_found');
+      }
+      throw new Error('Requested content not found or unavailable');
+    } else if (lastError.message.includes('rate limit') || lastError.message.includes('quota')) {
+      if (fallbackMode) {
+        return this.generateFallbackResponse(prompt, 'rate_limit');
+      }
+      throw new Error('Service temporarily unavailable due to high demand');
+    } else {
+      // Generic error
+      if (fallbackMode) {
+        return this.generateFallbackResponse(prompt, 'generic');
+      }
+      throw lastError;
+    }
+  }
+
+  // Enhanced fallback response generator
+  generateFallbackResponse(prompt, errorType) {
+    const responses = {
+      network: '🌐 **Koneksi Bermasalah**\n\nSistem tidak dapat terhubung ke server AI saat ini.\n\n**Solusi:**\n• Coba lagi dalam 1-2 menit\n• Pastikan koneksi internet stabil\n• Gunakan pertanyaan yang lebih sederhana\n\n_Tim teknis sedang memperbaiki masalah ini._',
+      
+      invalid_request: '📝 **Format Tidak Valid**\n\nPermintaan Anda tidak dapat diproses dalam format saat ini.\n\n**Saran:**\n• Gunakan bahasa yang lebih jelas\n• Hindari karakter khusus berlebihan\n• Coba dengan kalimat yang lebih sederhana\n\n_Contoh: "Jelaskan tentang teknologi AI"_',
+      
+      not_found: '🔍 **Konten Tidak Tersedia**\n\nSumber atau URL yang diminta tidak dapat diakses.\n\n**Solusi:**\n• Periksa kembali URL yang diberikan\n• Pastikan sumber masih aktif\n• Coba tanpa menyertakan URL\n\n_Gunakan kata kunci umum untuk pencarian._',
+      
+      rate_limit: '⏱️ **Sistem Sedang Sibuk**\n\nTerlalu banyak permintaan sedang diproses saat ini.\n\n**Tunggu sebentar:**\n• Coba lagi dalam 2-3 menit\n• Gunakan `/status` untuk cek kondisi sistem\n• Pertanyaan sederhana mungkin lebih cepat diproses\n\n_Terima kasih atas kesabaran Anda._',
+      
+      generic: '⚙️ **Sistem Dalam Pemeliharaan**\n\nAI Concierge sedang mengalami gangguan teknis sementara.\n\n**Alternatif:**\n• Coba dengan perintah dasar seperti `/ping`\n• Hubungi administrator jika masalah berlanjut\n• Sistem akan pulih dalam waktu singkat\n\n_Mohon maaf atas ketidaknyamanan ini._'
+    };
+
+    const fallbackResponse = responses[errorType] || responses.generic;
+    
+    // Add timestamp dan error ID untuk tracking
+    const errorId = Date.now().toString(36).toUpperCase();
+    const timestamp = new Date().toLocaleTimeString('id-ID');
+    
+    return `${fallbackResponse}\n\n╭─────────────────╮\n│ 🆔 Error: ${errorId} │\n│ ⏰ Time: ${timestamp} │\n╰─────────────────╯`;
   }
 
   isAvailable() { 
