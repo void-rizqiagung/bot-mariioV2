@@ -73,9 +73,10 @@ class CommandHandler {
       );
     }
 
-    // Deteksi jenis permintaan untuk optimasi response
+    // Enhanced deteksi jenis permintaan untuk optimasi response
     const isQuestionPrompt = /^(apa|bagaimana|mengapa|kapan|dimana|siapa|berapa)/i.test(prompt);
     const hasUrl = /(https?:\/\/[^\s]+)/g.test(prompt);
+    const isSearchRequest = /\b(search|cari|sertakan.*link|sumber.*terpercaya)\b/i.test(prompt);
     
     // Enhanced typing indicator dengan fallback handling
     try {
@@ -106,9 +107,9 @@ class CommandHandler {
       // Enhanced options dengan resilient configuration
       const aiOptions = {
         userName: user.name || 'User',
-        useGrounding: hasUrl || isQuestionPrompt, // Gunakan grounding untuk URL atau pertanyaan
+        useGrounding: hasUrl || isQuestionPrompt || isSearchRequest, // Gunakan grounding untuk URL, pertanyaan, atau permintaan pencarian
         maxRetries: 3, // Increased retry attempts
-        timeout: 30000, // 30 second timeout
+        timeout: 35000, // 35 second timeout untuk pencarian web yang lebih kompleks
         fallbackMode: true // Enable fallback responses
       };
 
