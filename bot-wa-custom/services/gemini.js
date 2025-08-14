@@ -324,7 +324,7 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
   }
 
   // ═══════════════════════════════════════════════════════════════════════════════
-  // 🎨 ENHANCED PROFESSIONAL VISUAL DESIGN SYSTEM v2.0
+  // 📊 SWISS PRECISION PROFESSIONAL VISUAL SYSTEM v3.0
   // ═══════════════════════════════════════════════════════════════════════════════
   
   formatProfessionalChatBubble(response, responseType = 'general', query = '') {
@@ -332,184 +332,124 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
       return this.createErrorBubble('AI_UNAVAILABLE', 'AI Concierge sedang mengalami gangguan teknis. Mohon coba beberapa saat lagi.');
     }
 
-    // 🎯 Enhanced Creative Headers dengan Premium ASCII Art
+    // 🏢 Professional Headers - Corporate Standard
     const designHeaders = {
-      'general': this.createHeaderDesign('🤖', 'AI CONCIERGE', '🎯', 'premium'),
-      'search': this.createHeaderDesign('🔍', 'GLOBAL RESEARCH', '🌐', 'research'), 
-      'url': this.createHeaderDesign('📄', 'CONTENT ANALYSIS', '🔬', 'analysis')
+      'general': this.createCorporateHeader('AI ASSISTANT', 'standard'),
+      'search': this.createCorporateHeader('WEB RESEARCH', 'research'), 
+      'url': this.createCorporateHeader('CONTENT ANALYSIS', 'analysis')
     };
 
     const headerDesign = designHeaders[responseType] || designHeaders['general'];
     
-    // 💭 Interactive Query Context dengan Enhanced Visual
-    const contextSection = this.createQueryContext(query);
+    // 📋 Clean Content Processing
+    const processedContent = this.enhanceProfessionalTypography(response.text);
     
-    // 📝 Professional Content dengan Advanced Typography
-    const processedContent = this.enhanceContentTypography(response.text);
+    // 🔗 Professional References
+    const referencesSection = this.createCorporateReferences(response.groundingAttributions);
     
-    // 🏗️ Main Content Structure dengan Modern Card Design
-    const contentSection = this.createContentCard(processedContent);
+    // 📊 System Footer
+    const footerSection = this.createSystemFooter(response.responseTime);
     
-    // 📚 Enhanced References dengan Visual Citations
-    const referencesSection = this.createReferencesSection(response.groundingAttributions);
-    
-    // ⚡ Premium Footer dengan Advanced Metrics
-    const footerSection = this.createPremiumFooter(response.responseTime);
-    
-    // 🎨 Assemble Professional Message Design
-    return `${headerDesign}\n${contextSection}${contentSection}${referencesSection}\n${footerSection}`;
+    // 🏗️ Assemble Corporate Message
+    return `${headerDesign}\n\n${processedContent}${referencesSection}\n${footerSection}`;
   }
 
   // ┌─────────────────────────────────────────────────────────────┐
-  // │ 🎨 DESIGN COMPONENT CREATORS - Professional Visual Elements │
+  // │ 🏢 CORPORATE DESIGN COMPONENTS - Mature Professional Style │
   // └─────────────────────────────────────────────────────────────┘
 
-  createHeaderDesign(leftIcon, title, rightIcon, theme = 'premium') {
-    const themes = {
-      'premium': {
-        border: '═',
-        corner: '╔╗╚╝',
-        accent: '◆',
-        glow: '✦'
-      },
-      'research': {
-        border: '─',
-        corner: '┏┓┗┛',
-        accent: '◈',
-        glow: '✧'
-      },
-      'analysis': {
-        border: '━',
-        corner: '┏━┓┗━┛',
-        accent: '◇',
-        glow: '✪'
-      }
+  createCorporateHeader(title, type = 'standard') {
+    const types = {
+      'standard': { prefix: 'AI', symbol: '▸' },
+      'research': { prefix: 'WEB', symbol: '▸' },
+      'analysis': { prefix: 'DOC', symbol: '▸' }
     };
     
-    const t = themes[theme];
-    const titleLength = title.length + 6; // Account for icons and spaces
-    const borderLine = t.border.repeat(Math.max(titleLength + 8, 35));
+    const config = types[type] || types['standard'];
+    const headerLine = '─'.repeat(50);
     
-    return `${t.corner[0]}${borderLine}${t.corner[1]}\n` +
-           `║ ${leftIcon} ${t.glow} *${title}* ${t.glow} ${rightIcon} ║\n` +
-           `${t.corner[2]}${borderLine}${t.corner[3]}`;
+    return `┌${headerLine}┐\n` +
+           `│ ${config.prefix} ${config.symbol} *${title}*${' '.repeat(Math.max(0, 41 - title.length - config.prefix.length))} │\n` +
+           `└${headerLine}┘`;
   }
 
-  createQueryContext(query) {
-    if (!query || query.trim().length === 0) return '\n';
-    
-    const truncatedQuery = query.length > 50 ? query.substring(0, 50) + '...' : query;
-    const padding = Math.max(0, 35 - truncatedQuery.length);
-    const spacePadding = ' '.repeat(Math.floor(padding / 2));
-    
-    return `\n┌${'─'.repeat(55)}┐\n` +
-           `│ 💭 *PERMINTAAN ANDA*${' '.repeat(28)} │\n` +
-           `├${'─'.repeat(55)}┤\n` +
-           `│${spacePadding}_"${truncatedQuery}"_${spacePadding}${' '.repeat(padding % 2)} │\n` +
-           `└${'─'.repeat(55)}┘\n\n`;
-  }
-
-  createContentCard(content) {
-    const cardTop = '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓';
-    const cardMid = '┃ 📋 *RESPONS AI PROFESSIONAL*                           ┃';
-    const cardSep = '┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫';
-    const cardBot = '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛';
-    
-    return `${cardTop}\n${cardMid}\n${cardSep}\n\n${content}\n`;
-  }
-
-  enhanceContentTypography(text) {
+  enhanceProfessionalTypography(text) {
     return text
-      .replace(/\*\*(.*?)\*\*/g, '*$1*') // Bold conversion
-      .replace(/\_(.*?)\_/g, '_$1_')     // Italic preservation
-      .replace(/\n\n\n+/g, '\n\n')      // Clean multiple newlines
+      .replace(/\*\*(.*?)\*\*/g, '*$1*')
+      .replace(/\_(.*?)\_/g, '_$1_')
+      .replace(/\n\n\n+/g, '\n\n')
       .replace(/^(#{1,6})\s(.+)$/gm, (match, hashes, title) => {
-        // Convert markdown headers to WhatsApp formatting
-        const level = hashes.length;
-        const symbols = ['🔥', '⭐', '💫', '✨', '💎', '🎯'][level - 1] || '●';
-        return `\n${symbols} *${title.toUpperCase()}*\n`;
+        return `\n*${title.toUpperCase()}*\n`;
       })
-      .replace(/^(\d+)\.\s/gm, (match, num) => {
-        // Enhanced numbered lists
-        const numberEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
-        const emoji = numberEmojis[parseInt(num) - 1] || `${num}️⃣`;
-        return `${emoji} `;
-      })
-      .replace(/^[\-\*\+]\s/gm, '◆ ') // Enhanced bullet points
-      .replace(/\*([^*]+)\*/g, '*$1*') // Ensure bold formatting
+      .replace(/^(\d+)\.\s/gm, '$1. ')
+      .replace(/^[\-\*\+]\s/gm, '• ')
+      .replace(/\*([^*]+)\*/g, '*$1*')
       .trim();
   }
 
-  createReferencesSection(groundingAttributions) {
+  createCorporateReferences(groundingAttributions) {
     if (!groundingAttributions || groundingAttributions.length === 0) {
       return '';
     }
 
-    let referencesHtml = `\n\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n`;
-    referencesHtml += `┃ 📚 *SUMBER REFERENSI TERPERCAYA*                       ┃\n`;
-    referencesHtml += `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n`;
+    let referencesText = `\n\n┌${'─'.repeat(50)}┐\n`;
+    referencesText += `│ *REFERENSI*${' '.repeat(39)} │\n`;
+    referencesText += `├${'─'.repeat(50)}┤\n`;
     
     groundingAttributions.forEach((source, index) => {
-      const title = source.web?.title || 'Sumber Terpercaya';
+      const title = source.web?.title || 'Sumber Data';
       const uri = source.web?.uri;
       
       if (uri) {
-        const badges = ['🥇', '🥈', '🥉', '🏅', '⭐'][index] || '📄';
-        const truncatedTitle = title.length > 40 ? title.substring(0, 40) + '...' : title;
+        const num = String(index + 1).padStart(2, '0');
+        const truncatedTitle = title.length > 35 ? title.substring(0, 35) + '...' : title;
         
-        referencesHtml += `\n${badges} *${truncatedTitle}*\n`;
-        referencesHtml += `   🔗 ${uri}\n`;
+        referencesText += `│ ${num}. ${truncatedTitle}${' '.repeat(Math.max(0, 42 - truncatedTitle.length))} │\n`;
+        referencesText += `│     ${uri}${' '.repeat(Math.max(0, 46 - uri.length))} │\n`;
         
         if (index < groundingAttributions.length - 1) {
-          referencesHtml += `   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n`;
+          referencesText += `│${' '.repeat(50)} │\n`;
         }
       }
     });
     
-    referencesHtml += `\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
-    return referencesHtml;
+    referencesText += `└${'─'.repeat(50)}┘`;
+    return referencesText;
   }
 
-  createPremiumFooter(responseTime) {
+  createSystemFooter(responseTime) {
     const timestamp = new Date().toLocaleTimeString('id-ID', { 
       hour: '2-digit', 
-      minute: '2-digit',
-      second: '2-digit'
+      minute: '2-digit'
     });
     
     const date = new Date().toLocaleDateString('id-ID', {
       day: '2-digit',
-      month: 'short',
+      month: '2-digit',
       year: 'numeric'
     });
     
-    const performanceTime = responseTime ? `${responseTime}ms` : 'N/A';
-    const performanceIcon = responseTime < 5000 ? '🚀' : responseTime < 15000 ? '⚡' : '⏱️';
+    const performanceTime = responseTime ? `${Math.round(responseTime/1000)}s` : 'N/A';
     
-    return `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n` +
-           `┃ ✨ *AI CONCIERGE PROFESSIONAL SYSTEM* ✨               ┃\n` +
-           `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n` +
-           `┃ 📅 ${date} • 🕒 ${timestamp} • ${performanceIcon} ${performanceTime}        ┃\n` +
-           `┃ 🎯 Powered by Gemini 2.5 Flash • 🇮🇩 Made in Indonesia┃\n` +
-           `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+    return `┌${'─'.repeat(50)}┐\n` +
+           `│ ${date} ${timestamp} | Response: ${performanceTime}${' '.repeat(Math.max(0, 20 - performanceTime.length))} │\n` +
+           `│ AI Assistant v2.1 - Gemini 2.5 Flash${' '.repeat(12)} │\n` +
+           `└${'─'.repeat(50)}┘`;
   }
 
   createErrorBubble(errorType, message) {
     const errorDesigns = {
       'AI_UNAVAILABLE': {
-        icon: '🔴',
         title: 'SISTEM AI TIDAK TERSEDIA',
-        symbol: '⚠️'
+        code: 'AI001'
       },
       'NETWORK_ERROR': {
-        icon: '🌐',
         title: 'GANGGUAN KONEKSI JARINGAN',
-        symbol: '📡'
+        code: 'NET001'
       },
       'PROCESSING_ERROR': {
-        icon: '⚙️',
         title: 'KESALAHAN PEMROSESAN',
-        symbol: '🔧'
+        code: 'PROC001'
       }
     };
     
@@ -517,15 +457,16 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     const timestamp = new Date().toLocaleTimeString('id-ID');
     const errorId = Date.now().toString(36).toUpperCase();
     
-    return `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n` +
-           `┃ ${design.icon} *${design.title}* ${design.icon}                 ┃\n` +
-           `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n` +
-           `┃                                                        ┃\n` +
-           `┃ ${design.symbol} ${message}                        ┃\n` +
-           `┃                                                        ┃\n` +
-           `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n` +
-           `┃ 🆔 Error ID: ${errorId} • ⏰ ${timestamp}        ┃\n` +
-           `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+    return `┌${'─'.repeat(50)}┐\n` +
+           `│ *SYSTEM ERROR - ${design.code}*${' '.repeat(Math.max(0, 26 - design.code.length))} │\n` +
+           `├${'─'.repeat(50)}┤\n` +
+           `│ ${design.title}${' '.repeat(Math.max(0, 48 - design.title.length))} │\n` +
+           `│${' '.repeat(50)} │\n` +
+           `│ ${message.substring(0, 46)}${' '.repeat(Math.max(0, 48 - Math.min(message.length, 46)))} │\n` +
+           `│${' '.repeat(50)} │\n` +
+           `├${'─'.repeat(50)}┤\n` +
+           `│ Error ID: ${errorId} | ${timestamp}${' '.repeat(Math.max(0, 23 - errorId.length - timestamp.length))} │\n` +
+           `└${'─'.repeat(50)}┘`;
   }
 
   async generateContextualResponse(prompt, options = {}) {
