@@ -323,59 +323,209 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     }
   }
 
-  // Enhanced Professional Creative Bubble Chat Design
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // 🎨 ENHANCED PROFESSIONAL VISUAL DESIGN SYSTEM v2.0
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   formatProfessionalChatBubble(response, responseType = 'general', query = '') {
     if (!response || !response.text) {
-      return '🔴 *SISTEM ERROR* 🔴\n\n╭─────────────────────╮\n│ ⚠️ *AI TIDAK TERSEDIA* │\n╰─────────────────────╯\n\n_AI Concierge sedang mengalami gangguan teknis. Mohon coba beberapa saat lagi._';
+      return this.createErrorBubble('AI_UNAVAILABLE', 'AI Concierge sedang mengalami gangguan teknis. Mohon coba beberapa saat lagi.');
     }
 
-    // Enhanced Creative Headers dengan Symbol Khusus
-    const headers = {
-      'general': '🤖 ╭─ *AI CONCIERGE* ─╮ 🎯',
-      'search': '🔍 ╭─ *GLOBAL RESEARCH* ─╮ 🌐', 
-      'url': '📄 ╭─ *CONTENT ANALYSIS* ─╮ 🔬'
+    // 🎯 Enhanced Creative Headers dengan Premium ASCII Art
+    const designHeaders = {
+      'general': this.createHeaderDesign('🤖', 'AI CONCIERGE', '🎯', 'premium'),
+      'search': this.createHeaderDesign('🔍', 'GLOBAL RESEARCH', '🌐', 'research'), 
+      'url': this.createHeaderDesign('📄', 'CONTENT ANALYSIS', '🔬', 'analysis')
     };
 
-    const header = headers[responseType] || headers['general'];
+    const headerDesign = designHeaders[responseType] || designHeaders['general'];
     
-    // Creative Query Context dengan Visual Enhancement
-    let contextInfo = '';
-    if (query && query.trim().length > 0) {
-      const truncatedQuery = query.length > 45 ? query.substring(0, 45) + '...' : query;
-      contextInfo = `\n╭──── 💭 *PERMINTAAN* ────╮\n│ _"${truncatedQuery}"_ │\n╰────────────────────────╯\n\n`;
-    }
+    // 💭 Interactive Query Context dengan Enhanced Visual
+    const contextSection = this.createQueryContext(query);
+    
+    // 📝 Professional Content dengan Advanced Typography
+    const processedContent = this.enhanceContentTypography(response.text);
+    
+    // 🏗️ Main Content Structure dengan Modern Card Design
+    const contentSection = this.createContentCard(processedContent);
+    
+    // 📚 Enhanced References dengan Visual Citations
+    const referencesSection = this.createReferencesSection(response.groundingAttributions);
+    
+    // ⚡ Premium Footer dengan Advanced Metrics
+    const footerSection = this.createPremiumFooter(response.responseTime);
+    
+    // 🎨 Assemble Professional Message Design
+    return `${headerDesign}\n${contextSection}${contentSection}${referencesSection}\n${footerSection}`;
+  }
 
-    // Professional Content Formatting dengan Visual Separator
-    let formattedContent = response.text
-      .replace(/\*\*(.*?)\*\*/g, '*$1*')
-      .replace(/\_(.*?)\_/g, '_$1_') 
-      .replace(/\n\n\n+/g, '\n\n')
+  // ┌─────────────────────────────────────────────────────────────┐
+  // │ 🎨 DESIGN COMPONENT CREATORS - Professional Visual Elements │
+  // └─────────────────────────────────────────────────────────────┘
+
+  createHeaderDesign(leftIcon, title, rightIcon, theme = 'premium') {
+    const themes = {
+      'premium': {
+        border: '═',
+        corner: '╔╗╚╝',
+        accent: '◆',
+        glow: '✦'
+      },
+      'research': {
+        border: '─',
+        corner: '┏┓┗┛',
+        accent: '◈',
+        glow: '✧'
+      },
+      'analysis': {
+        border: '━',
+        corner: '┏━┓┗━┛',
+        accent: '◇',
+        glow: '✪'
+      }
+    };
+    
+    const t = themes[theme];
+    const titleLength = title.length + 6; // Account for icons and spaces
+    const borderLine = t.border.repeat(Math.max(titleLength + 8, 35));
+    
+    return `${t.corner[0]}${borderLine}${t.corner[1]}\n` +
+           `║ ${leftIcon} ${t.glow} *${title}* ${t.glow} ${rightIcon} ║\n` +
+           `${t.corner[2]}${borderLine}${t.corner[3]}`;
+  }
+
+  createQueryContext(query) {
+    if (!query || query.trim().length === 0) return '\n';
+    
+    const truncatedQuery = query.length > 50 ? query.substring(0, 50) + '...' : query;
+    const padding = Math.max(0, 35 - truncatedQuery.length);
+    const spacePadding = ' '.repeat(Math.floor(padding / 2));
+    
+    return `\n┌${'─'.repeat(55)}┐\n` +
+           `│ 💭 *PERMINTAAN ANDA*${' '.repeat(28)} │\n` +
+           `├${'─'.repeat(55)}┤\n` +
+           `│${spacePadding}_"${truncatedQuery}"_${spacePadding}${' '.repeat(padding % 2)} │\n` +
+           `└${'─'.repeat(55)}┘\n\n`;
+  }
+
+  createContentCard(content) {
+    const cardTop = '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓';
+    const cardMid = '┃ 📋 *RESPONS AI PROFESSIONAL*                           ┃';
+    const cardSep = '┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫';
+    const cardBot = '┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛';
+    
+    return `${cardTop}\n${cardMid}\n${cardSep}\n\n${content}\n`;
+  }
+
+  enhanceContentTypography(text) {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '*$1*') // Bold conversion
+      .replace(/\_(.*?)\_/g, '_$1_')     // Italic preservation
+      .replace(/\n\n\n+/g, '\n\n')      // Clean multiple newlines
+      .replace(/^(#{1,6})\s(.+)$/gm, (match, hashes, title) => {
+        // Convert markdown headers to WhatsApp formatting
+        const level = hashes.length;
+        const symbols = ['🔥', '⭐', '💫', '✨', '💎', '🎯'][level - 1] || '●';
+        return `\n${symbols} *${title.toUpperCase()}*\n`;
+      })
+      .replace(/^(\d+)\.\s/gm, (match, num) => {
+        // Enhanced numbered lists
+        const numberEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+        const emoji = numberEmojis[parseInt(num) - 1] || `${num}️⃣`;
+        return `${emoji} `;
+      })
+      .replace(/^[\-\*\+]\s/gm, '◆ ') // Enhanced bullet points
+      .replace(/\*([^*]+)\*/g, '*$1*') // Ensure bold formatting
       .trim();
+  }
 
-    // Creative Structure dengan Professional Symbols
-    let bubbleMessage = `${header}\n${contextInfo}╔══════════════════════╗\n║ 📝 *JAWABAN LENGKAP*  ║\n╚══════════════════════╝\n\n${formattedContent}`;
-
-    // Enhanced References Section dengan Creative Design
-    if (response.groundingAttributions && response.groundingAttributions.length > 0) {
-      bubbleMessage += `\n\n╔════════════════════════╗\n║ 📚 *SUMBER TERPERCAYA* ║\n╚════════════════════════╝`;
-      
-      response.groundingAttributions.forEach((source, index) => {
-        const title = source.web?.title || 'Sumber Kredibel';
-        const uri = source.web?.uri;
-        if (uri) {
-          const indexIcon = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'][index] || `${index + 1}️⃣`;
-          bubbleMessage += `\n\n🔗 ${indexIcon} *${title}*\n   🌐 ${uri}`;
-        }
-      });
+  createReferencesSection(groundingAttributions) {
+    if (!groundingAttributions || groundingAttributions.length === 0) {
+      return '';
     }
 
-    // Enhanced Creative Footer dengan Performance Metrics
-    const responseTime = response.responseTime ? ` ⚡ ${response.responseTime}ms` : '';
-    const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    let referencesHtml = `\n\n┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n`;
+    referencesHtml += `┃ 📚 *SUMBER REFERENSI TERPERCAYA*                       ┃\n`;
+    referencesHtml += `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n`;
     
-    bubbleMessage += `\n\n╭─────────────────────────╮\n│ ✨ *AI CONCIERGE SYSTEM* ✨ │\n│ 🕐 ${timestamp}${responseTime}     │\n╰─────────────────────────╯`;
+    groundingAttributions.forEach((source, index) => {
+      const title = source.web?.title || 'Sumber Terpercaya';
+      const uri = source.web?.uri;
+      
+      if (uri) {
+        const badges = ['🥇', '🥈', '🥉', '🏅', '⭐'][index] || '📄';
+        const truncatedTitle = title.length > 40 ? title.substring(0, 40) + '...' : title;
+        
+        referencesHtml += `\n${badges} *${truncatedTitle}*\n`;
+        referencesHtml += `   🔗 ${uri}\n`;
+        
+        if (index < groundingAttributions.length - 1) {
+          referencesHtml += `   ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n`;
+        }
+      }
+    });
+    
+    referencesHtml += `\n┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+    return referencesHtml;
+  }
 
-    return bubbleMessage;
+  createPremiumFooter(responseTime) {
+    const timestamp = new Date().toLocaleTimeString('id-ID', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    });
+    
+    const date = new Date().toLocaleDateString('id-ID', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+    
+    const performanceTime = responseTime ? `${responseTime}ms` : 'N/A';
+    const performanceIcon = responseTime < 5000 ? '🚀' : responseTime < 15000 ? '⚡' : '⏱️';
+    
+    return `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n` +
+           `┃ ✨ *AI CONCIERGE PROFESSIONAL SYSTEM* ✨               ┃\n` +
+           `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n` +
+           `┃ 📅 ${date} • 🕒 ${timestamp} • ${performanceIcon} ${performanceTime}        ┃\n` +
+           `┃ 🎯 Powered by Gemini 2.5 Flash • 🇮🇩 Made in Indonesia┃\n` +
+           `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+  }
+
+  createErrorBubble(errorType, message) {
+    const errorDesigns = {
+      'AI_UNAVAILABLE': {
+        icon: '🔴',
+        title: 'SISTEM AI TIDAK TERSEDIA',
+        symbol: '⚠️'
+      },
+      'NETWORK_ERROR': {
+        icon: '🌐',
+        title: 'GANGGUAN KONEKSI JARINGAN',
+        symbol: '📡'
+      },
+      'PROCESSING_ERROR': {
+        icon: '⚙️',
+        title: 'KESALAHAN PEMROSESAN',
+        symbol: '🔧'
+      }
+    };
+    
+    const design = errorDesigns[errorType] || errorDesigns['AI_UNAVAILABLE'];
+    const timestamp = new Date().toLocaleTimeString('id-ID');
+    const errorId = Date.now().toString(36).toUpperCase();
+    
+    return `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n` +
+           `┃ ${design.icon} *${design.title}* ${design.icon}                 ┃\n` +
+           `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n` +
+           `┃                                                        ┃\n` +
+           `┃ ${design.symbol} ${message}                        ┃\n` +
+           `┃                                                        ┃\n` +
+           `┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫\n` +
+           `┃ 🆔 Error ID: ${errorId} • ⏰ ${timestamp}        ┃\n` +
+           `┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
   }
 
   async generateContextualResponse(prompt, options = {}) {
@@ -683,27 +833,135 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     }
   }
 
-  // Enhanced fallback response generator
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // 🛠️ ENHANCED FALLBACK RESPONSE GENERATOR v2.0
+  // ═══════════════════════════════════════════════════════════════════════════════
+  
   generateFallbackResponse(prompt, errorType) {
-    const responses = {
-      network: '🌐 **Koneksi Bermasalah**\n\nSistem tidak dapat terhubung ke server AI saat ini.\n\n**Solusi:**\n• Coba lagi dalam 1-2 menit\n• Pastikan koneksi internet stabil\n• Gunakan pertanyaan yang lebih sederhana\n\n_Tim teknis sedang memperbaiki masalah ini._',
+    const errorConfigs = {
+      network: {
+        icon: '🌐',
+        title: 'GANGGUAN KONEKSI JARINGAN',
+        description: 'Sistem tidak dapat terhubung ke server AI saat ini.',
+        solutions: [
+          'Coba lagi dalam 1-2 menit',
+          'Pastikan koneksi internet stabil', 
+          'Gunakan pertanyaan yang lebih sederhana'
+        ],
+        note: 'Tim teknis sedang memperbaiki masalah ini.',
+        severity: 'medium'
+      },
       
-      invalid_request: '📝 **Format Tidak Valid**\n\nPermintaan Anda tidak dapat diproses dalam format saat ini.\n\n**Saran:**\n• Gunakan bahasa yang lebih jelas\n• Hindari karakter khusus berlebihan\n• Coba dengan kalimat yang lebih sederhana\n\n_Contoh: "Jelaskan tentang teknologi AI"_',
+      invalid_request: {
+        icon: '📝',
+        title: 'FORMAT PERMINTAAN BERMASALAH',
+        description: 'Permintaan Anda tidak dapat diproses dalam format saat ini.',
+        solutions: [
+          'Gunakan bahasa yang lebih jelas dan spesifik',
+          'Hindari karakter khusus atau simbol berlebihan',
+          'Coba dengan struktur kalimat yang lebih sederhana',
+          'Contoh: "Jelaskan tentang teknologi AI"'
+        ],
+        note: 'AI memerlukan pertanyaan dengan format yang jelas.',
+        severity: 'low'
+      },
       
-      not_found: '🔍 **URL Tidak Dapat Diakses (Error 404)**\n\nSumber atau URL yang diminta tidak ditemukan di server.\n\n**Kemungkinan Penyebab:**\n• Artikel/halaman telah dihapus atau dipindahkan\n• URL mengalami perubahan struktur\n• Website melakukan reorganisasi konten\n• Link sudah tidak aktif/expired\n\n**Solusi Alternatif:**\n• AI akan melakukan pencarian web otomatis untuk topik yang sama\n• Mencari sumber alternatif yang masih aktif\n• Memberikan informasi dari database pengetahuan terkini\n• Menyertakan link sumber terpercaya yang valid\n\n✅ _Pencarian web sedang diaktifkan untuk memberikan informasi terbaik._',
+      not_found: {
+        icon: '🔍',
+        title: 'URL TIDAK DAPAT DIAKSES (ERROR 404)',
+        description: 'Sumber atau URL yang diminta tidak ditemukan di server.',
+        solutions: [
+          'Pastikan URL masih aktif dan dapat diakses',
+          'Coba dengan sumber atau website lain',
+          'Sertakan konten secara manual dalam pesan',
+          'Gunakan kata kunci umum untuk pencarian web'
+        ],
+        causes: [
+          'Artikel/halaman telah dihapus atau dipindahkan',
+          'URL mengalami perubahan struktur',
+          'Website melakukan reorganisasi konten',
+          'Link sudah tidak aktif atau expired'
+        ],
+        note: 'AI akan melakukan pencarian web alternatif untuk topik yang sama.',
+        severity: 'high'
+      },
       
-      rate_limit: '⏱️ **Sistem Sedang Sibuk**\n\nTerlalu banyak permintaan sedang diproses saat ini.\n\n**Tunggu sebentar:**\n• Coba lagi dalam 2-3 menit\n• Gunakan `/status` untuk cek kondisi sistem\n• Pertanyaan sederhana mungkin lebih cepat diproses\n\n_Terima kasih atas kesabaran Anda._',
+      rate_limit: {
+        icon: '⏱️',
+        title: 'SISTEM SEDANG SIBUK',
+        description: 'Terlalu banyak permintaan sedang diproses secara bersamaan.',
+        solutions: [
+          'Tunggu 2-3 menit sebelum mencoba lagi',
+          'Gunakan `/status` untuk cek kondisi sistem',
+          'Pertanyaan sederhana mungkin lebih cepat diproses'
+        ],
+        note: 'Terima kasih atas kesabaran Anda.',
+        severity: 'medium'
+      },
       
-      generic: '⚙️ **Sistem Dalam Pemeliharaan**\n\nAI Concierge sedang mengalami gangguan teknis sementara.\n\n**Alternatif:**\n• Coba dengan perintah dasar seperti `/ping`\n• Hubungi administrator jika masalah berlanjut\n• Sistem akan pulih dalam waktu singkat\n\n_Mohon maaf atas ketidaknyamanan ini._'
+      generic: {
+        icon: '⚙️',
+        title: 'SISTEM DALAM PEMELIHARAAN',
+        description: 'AI Concierge sedang mengalami gangguan teknis sementara.',
+        solutions: [
+          'Coba dengan perintah dasar seperti `/ping`',
+          'Hubungi administrator jika masalah berlanjut',
+          'Sistem akan pulih dalam waktu singkat'
+        ],
+        note: 'Mohon maaf atas ketidaknyamanan ini.',
+        severity: 'high'
+      }
     };
 
-    const fallbackResponse = responses[errorType] || responses.generic;
-    
-    // Add timestamp dan error ID untuk tracking
+    const config = errorConfigs[errorType] || errorConfigs.generic;
     const errorId = Date.now().toString(36).toUpperCase();
-    const timestamp = new Date().toLocaleTimeString('id-ID');
+    const timestamp = new Date().toLocaleString('id-ID');
     
-    return `${fallbackResponse}\n\n╭─────────────────╮\n│ 🆔 Error: ${errorId} │\n│ ⏰ Time: ${timestamp} │\n╰─────────────────╯`;
+    // Severity-based visual styling
+    const severityStyles = {
+      'low': { border: '─', color: '🟡' },
+      'medium': { border: '━', color: '🟠' },
+      'high': { border: '═', color: '🔴' }
+    };
+    
+    const style = severityStyles[config.severity];
+    
+    let fallbackMessage = `┏${style.border.repeat(54)}┓\n`;
+    fallbackMessage += `┃ ${config.icon} *${config.title}* ${config.icon}${' '.repeat(Math.max(0, 32 - config.title.length))} ┃\n`;
+    fallbackMessage += `┗${style.border.repeat(54)}┛\n\n`;
+    
+    // Description section
+    fallbackMessage += `${style.color} *DESKRIPSI MASALAH*\n`;
+    fallbackMessage += `${config.description}\n\n`;
+    
+    // Causes section (if available)
+    if (config.causes) {
+      fallbackMessage += `🔍 *KEMUNGKINAN PENYEBAB*\n`;
+      config.causes.forEach((cause, index) => {
+        fallbackMessage += `   ${index + 1}. ${cause}\n`;
+      });
+      fallbackMessage += '\n';
+    }
+    
+    // Solutions section
+    fallbackMessage += `💡 *SOLUSI YANG DISARANKAN*\n`;
+    config.solutions.forEach((solution, index) => {
+      const bullet = ['🔹', '🔸', '🔻', '🔺'][index % 4];
+      fallbackMessage += `   ${bullet} ${solution}\n`;
+    });
+    
+    // Note section
+    fallbackMessage += `\n📝 *CATATAN*\n`;
+    fallbackMessage += `${config.note}\n\n`;
+    
+    // Footer with tracking info
+    fallbackMessage += `┏${style.border.repeat(54)}┓\n`;
+    fallbackMessage += `┃ 🆔 Error ID: ${errorId}${' '.repeat(Math.max(0, 23 - errorId.length))} ┃\n`;
+    fallbackMessage += `┃ ⏰ Timestamp: ${timestamp}${' '.repeat(Math.max(0, 20 - timestamp.length))} ┃\n`;
+    fallbackMessage += `┃ 🔧 Severity: ${config.severity.toUpperCase()}${' '.repeat(Math.max(0, 26 - config.severity.length))} ┃\n`;
+    fallbackMessage += `┗${style.border.repeat(54)}┛`;
+    
+    return fallbackMessage;
   }
 
   isAvailable() { 

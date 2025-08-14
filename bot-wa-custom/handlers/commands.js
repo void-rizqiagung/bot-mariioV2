@@ -321,7 +321,70 @@ class CommandHandler {
   }
 
   async handleHelp(sock, message) {
-    const helpText = `*AI Concierge*\n\n/ai [pertanyaan]\n/search [topik]\n/image [deskripsi]\n/yt [url]\n/ytmp3 [url]\n/tiktok [url]\n/sticker\n/hd\n/status\n/ping\n/info`;
+    const helpText = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🤖 *AI CONCIERGE - PANDUAN LENGKAP* 🤖                 ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┌─ 🧠 *KECERDASAN BUATAN* ─────────────────────────────────┐
+│                                                        │
+│ 🎯 */ai [pertanyaan]*                                  │
+│    💭 Tanya AI tentang topik apapun                    │
+│    📝 Contoh: /ai jelaskan teknologi blockchain        │
+│                                                        │
+│ 🔍 */search [topik]*                                   │
+│    🌐 Riset web mendalam dengan sumber terpercaya      │
+│    📚 Contoh: /search makanan khas Indonesia           │
+│                                                        │
+│ 🖼️ */analyze*                                          │
+│    🔬 Analisis gambar dengan AI (kirim/reply gambar)   │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌─ 🎨 *MEDIA & KREATIVITAS* ───────────────────────────────┐
+│                                                        │
+│ 🎭 */image [deskripsi]*                                │
+│    ✨ Buat gambar AI dengan deskripsi                  │
+│    🖌️ Contoh: /image kucing astronot di luar angkasa   │
+│                                                        │
+│ 🎪 */sticker*                                          │
+│    🎨 Ubah gambar jadi stiker (kirim/reply gambar)     │
+│                                                        │
+│ ✨ */hd*                                               │
+│    📸 Tingkatkan kualitas gambar (kirim/reply gambar)  │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌─ 📥 *UNDUH MEDIA* ───────────────────────────────────────┐
+│                                                        │
+│ 🎥 */yt [url]*                                         │
+│    📺 Download video YouTube                           │
+│                                                        │
+│ 🎵 */ytmp3 [url]*                                      │
+│    🎧 Download audio YouTube (MP3)                     │
+│                                                        │
+│ 🎪 */tiktok [url]*                                     │
+│    📱 Download video TikTok tanpa watermark            │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌─ ⚙️ *SISTEM & UTILITAS* ─────────────────────────────────┐
+│                                                        │
+│ 📊 */status*    - Cek status sistem bot               │
+│ ⚡ */ping*      - Test kecepatan respons               │
+│ ℹ️ */info*      - Informasi versi dan model AI        │
+│ 📅 */schedule* - Lihat jadwal harian                   │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 💡 *TIPS PENGGUNAAN*                                   ┃
+┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+┃ • Gunakan pertanyaan yang spesifik untuk hasil terbaik ┃
+┃ • Bot hanya aktif di chat pribadi, tidak di grup       ┃
+┃ • Semua fitur gratis dan unlimited                     ┃
+┃ • AI menggunakan teknologi Google Gemini terbaru       ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+    
     await whatsappService.sendTextMessage(message.key.remoteJid, helpText);
   }
   
@@ -344,12 +407,99 @@ class CommandHandler {
 
   async handleStatus(sock, message) {
     const uptime = process.uptime();
-    const formatUptime = (s) => `${Math.floor(s/3600)} jam, ${Math.floor(s%3600/60)} menit`;
-    await whatsappService.sendTextMessage(message.key.remoteJid, `*Status*: Online\n*Waktu Aktif*: ${formatUptime(uptime)}`);
+    const formatUptime = (s) => {
+      const hours = Math.floor(s/3600);
+      const minutes = Math.floor(s%3600/60);
+      const seconds = Math.floor(s%60);
+      return `${hours}h ${minutes}m ${seconds}s`;
+    };
+    
+    const memUsage = process.memoryUsage();
+    const formatMB = (bytes) => (bytes / 1024 / 1024).toFixed(1) + 'MB';
+    const cpuUsage = process.cpuUsage();
+    
+    const statusText = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 📊 *STATUS SISTEM AI CONCIERGE* 📊                     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┌─ 🚀 *STATUS OPERASIONAL* ────────────────────────────────┐
+│                                                        │
+│ 🟢 *Status*: Online & Aktif                           │
+│ ⏰ *Uptime*: ${formatUptime(uptime)}                            │
+│ 🎯 *Mode*: Private Chat Only                          │
+│ 🤖 *AI Engine*: Google Gemini 2.5 Flash              │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌─ 💾 *PENGGUNAAN SISTEM* ─────────────────────────────────┐
+│                                                        │
+│ 🧠 *Memory RSS*: ${formatMB(memUsage.rss)}                     │
+│ 📈 *Heap Used*: ${formatMB(memUsage.heapUsed)}                 │
+│ 📊 *Heap Total*: ${formatMB(memUsage.heapTotal)}               │
+│ 💽 *External*: ${formatMB(memUsage.external)}                  │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌─ 🔧 *FITUR TERSEDIA* ────────────────────────────────────┐
+│                                                        │
+│ ✅ AI Chat & Search           ✅ Media Download         │
+│ ✅ Image Generation           ✅ Video Processing       │
+│ ✅ Text Analysis              ✅ Sticker Creation       │
+│ ✅ URL Validation             ✅ Error Recovery         │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🎯 Sistem beroperasi normal • Semua layanan aktif      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+    
+    await whatsappService.sendTextMessage(message.key.remoteJid, statusText);
   }
   
   async handleInfo(sock, message) {
-    await whatsappService.sendTextMessage(message.key.remoteJid, `*AI Concierge*\nVersi: Final\nModel: ${geminiService.getModel()}`);
+    const nodeVersion = process.version;
+    const platform = process.platform;
+    const arch = process.arch;
+    const timestamp = new Date().toLocaleString('id-ID');
+    
+    const infoText = `┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🤖 *AI CONCIERGE - INFORMASI SISTEM* 🤖                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+┌─ 🚀 *SISTEM INTI* ───────────────────────────────────────┐
+│                                                        │
+│ 📱 *Bot Name*: mariio4chunk AI                         │
+│ 🏷️ *Version*: Professional v2.1.0                      │
+│ 🧠 *AI Model*: ${geminiService.getModel()}                       │
+│ 🌍 *Language*: Bahasa Indonesia                        │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌─ 🖥️ *TEKNOLOGI* ─────────────────────────────────────────┐
+│                                                        │
+│ ⚙️ *Runtime*: Node.js ${nodeVersion}                   │
+│ 💽 *Platform*: ${platform}-${arch}                         │
+│ 🔗 *WhatsApp*: Baileys v6.x                           │
+│ 🗄️ *Database*: PostgreSQL 17                          │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┌─ 📊 *CAPABILITIES* ──────────────────────────────────────┐
+│                                                        │
+│ 🎯 *AI Chat*: Advanced conversational AI              │
+│ 🔍 *Web Search*: Real-time information retrieval      │
+│ 🖼️ *Image Analysis*: Computer vision & OCR            │
+│ 🎨 *Content Creation*: Text, images, and media        │
+│ 📱 *Media Processing*: Download, convert, enhance     │
+│                                                        │
+└────────────────────────────────────────────────────────┘
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🇮🇩 Made in Indonesia • ${timestamp}     ┃
+┃ 💡 Powered by Google Gemini & PostgreSQL              ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛`;
+    
+    await whatsappService.sendTextMessage(message.key.remoteJid, infoText);
   }
   
   async handleUnknownCommand(sock, message, command) {
