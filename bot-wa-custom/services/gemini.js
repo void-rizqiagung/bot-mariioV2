@@ -205,13 +205,19 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
           logger.info(`✅ URL validation SUCCESS (${response.status}) - attempt ${attempt}: ${cleanUrl}`);
           return true;
         } else if (response.status >= 400 && response.status < 500) {
-          // Client errors - check if it's a real 404 or access restriction
+          // Client errors - enhanced handling untuk berbagai kasus
           if (response.status === 403 || response.status === 401) {
             logger.warn(`🔒 URL requires authentication (${response.status}) but exists: ${cleanUrl}`);
             return true; // URL exists but needs auth - still valid for AI processing
           } else if (response.status === 404) {
-            logger.warn(`❌ URL not found (404): ${cleanUrl}`);
-            return false; // True 404
+            logger.warn(`❌ URL not found (404) - content may have been moved or deleted: ${cleanUrl}`);
+            return false; // True 404 - content tidak ditemukan
+          } else if (response.status === 410) {
+            logger.warn(`🗑️ URL permanently gone (410): ${cleanUrl}`);
+            return false; // Content permanently removed
+          } else if (response.status === 429) {
+            logger.warn(`⏱️ URL rate limited (429), will retry: ${cleanUrl}`);
+            // Continue to next attempt for rate limit
           } else {
             logger.warn(`⚠️ URL client error (${response.status}): ${cleanUrl}`);
             // Continue to next attempt for other 4xx errors
@@ -457,24 +463,37 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
         logger.info(`🔗 Using ${validUrls.length}/${urls.length} valid URLs for AI processing`);
         
       } else {
-        // Semua URL gagal validasi - berikan feedback detail
-        logger.warn(`⚠️ All ${urls.length} URLs failed validation, switching to search mode`);
+        // Semua URL gagal validasi - aktifkan mode pencarian web
+        logger.warn(`⚠️ All ${urls.length} URLs failed validation, activating enhanced web search mode`);
         
         // Categorize failures untuk feedback yang lebih baik
         const timeoutFailures = invalidUrls.filter(r => r.reason === 'timeout').length;
         const accessFailures = invalidUrls.filter(r => r.reason === 'not_accessible').length;
         const errorFailures = invalidUrls.filter(r => r.reason === 'error').length;
         
-        // Enhanced prompt dengan explanation
-        let failureExplanation = `\n\nCatatan: URL yang diberikan tidak dapat diakses`;
+        // Enhanced prompt dengan detailed explanation dan search directive
+        let failureExplanation = `\n\n📋 CATATAN PENTING: URL yang diberikan tidak dapat diakses`;
         if (timeoutFailures > 0) failureExplanation += ` (${timeoutFailures} timeout)`;
-        if (accessFailures > 0) failureExplanation += ` (${accessFailures} tidak tersedia)`;
+        if (accessFailures > 0) failureExplanation += ` (${accessFailures} tidak tersedia/404)`;
         if (errorFailures > 0) failureExplanation += ` (${errorFailures} error)`;
-        failureExplanation += `. Saya akan menjawab berdasarkan pengetahuan umum dan pencarian web.`;
+        
+        // Deteksi topik dari prompt untuk pencarian yang lebih terarah
+        const searchQuery = this.extractSearchKeywords(prompt);
+        
+        failureExplanation += `.\n\n🔍 INSTRUKSI PENCARIAN:
+- Lakukan pencarian web mendalam tentang: "${searchQuery}"
+- Cari sumber-sumber terpercaya dan aktual
+- Sertakan 3-5 link sumber yang valid dan dapat diakses
+- Berikan informasi lengkap dan komprehensif
+- Pastikan semua link yang disertakan adalah aktif dan dapat dibuka
+
+🎯 Prioritaskan hasil dari situs berita terpercaya, portal resmi, dan sumber kredibel lainnya.`;
         
         prompt = prompt + failureExplanation;
         tools = [{ googleSearch: {} }];
         responseType = 'search';
+        
+        logger.info(`🔍 Enhanced search mode activated with keywords: "${searchQuery}"`);
       }
     } else if (useGrounding) {
       // Enhanced Google Search configuration
@@ -638,6 +657,32 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     }
   }
 
+  // Enhanced search keyword extraction untuk pencarian yang lebih terarah
+  extractSearchKeywords(prompt) {
+    try {
+      // Remove common command words dan extract core topic
+      let keywords = prompt
+        .toLowerCase()
+        .replace(/^\/ai\s+/i, '') // Remove /ai command
+        .replace(/search\s+/i, '') // Remove search word
+        .replace(/sertakan\s+\d+\s+link\s+sumber\s*/i, '') // Remove link request
+        .replace(/\b(terpercaya|resmi|valid|aktual|update|terbaru)\b/gi, '') // Remove quality words
+        .replace(/\bhttps?:\/\/[^\s]+/gi, '') // Remove any URLs
+        .replace(/[^\w\s]/g, ' ') // Remove special characters
+        .replace(/\s+/g, ' ') // Normalize spaces
+        .trim();
+
+      // Extract the main topic (first few significant words)
+      const words = keywords.split(' ').filter(word => word.length > 2);
+      const mainKeywords = words.slice(0, 4).join(' '); // Take first 4 meaningful words
+      
+      return mainKeywords || 'informasi umum';
+    } catch (error) {
+      logger.warn('⚠️ Failed to extract search keywords', { error: error.message });
+      return 'informasi umum';
+    }
+  }
+
   // Enhanced fallback response generator
   generateFallbackResponse(prompt, errorType) {
     const responses = {
@@ -645,7 +690,7 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
       
       invalid_request: '📝 **Format Tidak Valid**\n\nPermintaan Anda tidak dapat diproses dalam format saat ini.\n\n**Saran:**\n• Gunakan bahasa yang lebih jelas\n• Hindari karakter khusus berlebihan\n• Coba dengan kalimat yang lebih sederhana\n\n_Contoh: "Jelaskan tentang teknologi AI"_',
       
-      not_found: '🔍 **URL Tidak Dapat Diakses**\n\nSumber atau URL yang diminta tidak dapat dijangkau oleh sistem.\n\n**Kemungkinan Penyebab:**\n• URL memerlukan login/authentication\n• Website memblokir akses bot\n• Server sementara tidak available\n• URL sudah tidak aktif (404)\n\n**Solusi:**\n• Pastikan URL dapat dibuka di browser\n• Coba dengan URL dari domain lain\n• Gunakan kata kunci untuk pencarian umum\n• Sertakan konten/teks URL secara manual\n\n_AI akan tetap berusaha menjawab berdasarkan pengetahuan yang tersedia._',
+      not_found: '🔍 **URL Tidak Dapat Diakses (Error 404)**\n\nSumber atau URL yang diminta tidak ditemukan di server.\n\n**Kemungkinan Penyebab:**\n• Artikel/halaman telah dihapus atau dipindahkan\n• URL mengalami perubahan struktur\n• Website melakukan reorganisasi konten\n• Link sudah tidak aktif/expired\n\n**Solusi Alternatif:**\n• AI akan melakukan pencarian web otomatis untuk topik yang sama\n• Mencari sumber alternatif yang masih aktif\n• Memberikan informasi dari database pengetahuan terkini\n• Menyertakan link sumber terpercaya yang valid\n\n✅ _Pencarian web sedang diaktifkan untuk memberikan informasi terbaik._',
       
       rate_limit: '⏱️ **Sistem Sedang Sibuk**\n\nTerlalu banyak permintaan sedang diproses saat ini.\n\n**Tunggu sebentar:**\n• Coba lagi dalam 2-3 menit\n• Gunakan `/status` untuk cek kondisi sistem\n• Pertanyaan sederhana mungkin lebih cepat diproses\n\n_Terima kasih atas kesabaran Anda._',
       
