@@ -157,54 +157,57 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     }
   }
 
-  // Format response dengan desain bubble chat yang lebih menarik dan profesional
+  // Enhanced Professional Creative Bubble Chat Design
   formatProfessionalChatBubble(response, responseType = 'general', query = '') {
     if (!response || !response.text) {
-      return '❌ *Maaf, Terjadi Kesalahan Sistem*\n\n_AI Concierge tidak dapat memproses permintaan Anda saat ini. Mohon coba beberapa saat lagi._';
+      return '🔴 *SISTEM ERROR* 🔴\n\n╭─────────────────────╮\n│ ⚠️ *AI TIDAK TERSEDIA* │\n╰─────────────────────╯\n\n_AI Concierge sedang mengalami gangguan teknis. Mohon coba beberapa saat lagi._';
     }
 
-    // Header dengan desain yang lebih menarik
+    // Enhanced Creative Headers dengan Symbol Khusus
     const headers = {
-      'general': '🧠 *AI CONCIERGE*',
-      'search': '🔍 *RISET WEB GLOBAL*',
-      'url': '📄 *ANALISIS KONTEN*'
+      'general': '🤖 ╭─ *AI CONCIERGE* ─╮ 🎯',
+      'search': '🔍 ╭─ *GLOBAL RESEARCH* ─╮ 🌐', 
+      'url': '📄 ╭─ *CONTENT ANALYSIS* ─╮ 🔬'
     };
 
     const header = headers[responseType] || headers['general'];
     
-    // Tambahkan konteks query jika ada
+    // Creative Query Context dengan Visual Enhancement
     let contextInfo = '';
     if (query && query.trim().length > 0) {
-      const truncatedQuery = query.length > 50 ? query.substring(0, 50) + '...' : query;
-      contextInfo = `\n┌─ _${truncatedQuery}_\n└─────────────────────\n\n`;
+      const truncatedQuery = query.length > 45 ? query.substring(0, 45) + '...' : query;
+      contextInfo = `\n╭──── 💭 *PERMINTAAN* ────╮\n│ _"${truncatedQuery}"_ │\n╰────────────────────────╯\n\n`;
     }
 
-    // Format konten utama dengan spacing yang baik
+    // Professional Content Formatting dengan Visual Separator
     let formattedContent = response.text
-      .replace(/\*\*(.*?)\*\*/g, '*$1*')  // Convert markdown bold to WhatsApp bold
-      .replace(/\_(.*?)\_/g, '_$1_')       // Keep WhatsApp italic
-      .replace(/\n\n\n+/g, '\n\n')        // Remove excessive line breaks
+      .replace(/\*\*(.*?)\*\*/g, '*$1*')
+      .replace(/\_(.*?)\_/g, '_$1_') 
+      .replace(/\n\n\n+/g, '\n\n')
       .trim();
 
-    // Struktur bubble chat yang profesional
-    let bubbleMessage = `${header}\n${contextInfo}${formattedContent}`;
+    // Creative Structure dengan Professional Symbols
+    let bubbleMessage = `${header}\n${contextInfo}╔══════════════════════╗\n║ 📝 *JAWABAN LENGKAP*  ║\n╚══════════════════════╝\n\n${formattedContent}`;
 
-    // Tambahkan referensi jika ada dengan format yang lebih menarik
+    // Enhanced References Section dengan Creative Design
     if (response.groundingAttributions && response.groundingAttributions.length > 0) {
-      bubbleMessage += `\n\n┌─────────────────────\n│ 📚 *SUMBER REFERENSI*\n└─────────────────────`;
+      bubbleMessage += `\n\n╔════════════════════════╗\n║ 📚 *SUMBER TERPERCAYA* ║\n╚════════════════════════╝`;
       
       response.groundingAttributions.forEach((source, index) => {
-        const title = source.web?.title || 'Sumber Terpercaya';
+        const title = source.web?.title || 'Sumber Kredibel';
         const uri = source.web?.uri;
         if (uri) {
-          bubbleMessage += `\n\n${index + 1}️⃣ *${title}*\n   🔗 ${uri}`;
+          const indexIcon = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣'][index] || `${index + 1}️⃣`;
+          bubbleMessage += `\n\n🔗 ${indexIcon} *${title}*\n   🌐 ${uri}`;
         }
       });
     }
 
-    // Footer dengan branding
-    const responseTime = response.responseTime ? ` • ${response.responseTime}ms` : '';
-    bubbleMessage += `\n\n────────────────────\n_✨ Powered by AI Concierge${responseTime}_`;
+    // Enhanced Creative Footer dengan Performance Metrics
+    const responseTime = response.responseTime ? ` ⚡ ${response.responseTime}ms` : '';
+    const timestamp = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    
+    bubbleMessage += `\n\n╭─────────────────────────╮\n│ ✨ *AI CONCIERGE SYSTEM* ✨ │\n│ 🕐 ${timestamp}${responseTime}     │\n╰─────────────────────────╯`;
 
     return bubbleMessage;
   }

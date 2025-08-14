@@ -59,16 +59,19 @@ class MessageHandler {
     const isCommand = this.commandPrefixes.some(prefix => text.startsWith(prefix));
 
     if (isCommand) {
-      await whatsappService.sendTyping(chatId, true); // Online saat ada prefix
+      // Bot online dan typing saat ada prefix
+      await whatsappService.sendPresenceUpdate('composing', chatId);
       const [command, ...args] = text.split(' ');
       try {
         await commandHandler.processCommand(sock, message, command, args, user);
       } finally {
-        await whatsappService.sendTyping(chatId, false); // Kembali offline setelah selesai
+        // Bot kembali offline setelah selesai
+        await whatsappService.sendPresenceUpdate('available', chatId);
       }
     } else if (mediaService.isValidYouTubeUrl(text) || mediaService.isValidTikTokUrl(text)) {
       await this.handleTextWithUrls(sock, message, text);
     }
+    // TIDAK ADA RESPON untuk pesan tanpa prefix - bot tetap offline dan tidak typing
   }
 
   async handleViewOnceMessage(sock, message) {
