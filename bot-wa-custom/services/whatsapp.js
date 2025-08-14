@@ -23,6 +23,15 @@ class WhatsAppService {
     }
   }
 
+  async sendPresenceUpdate(presence, chatId) {
+    try {
+      if (!this.sock || !this.isPrivateChat(chatId)) return;
+      await this.sock.sendPresenceUpdate(presence, chatId);
+    } catch (error) {
+      logger.error('💥 Gagal mengirim presence update', { error: error.message, chatId });
+    }
+  }
+
   // --- "GOD ANIMATION" LOADING MESSAGE ---
   async sendAnimatedLoadingMessage(chatId, baseText) {
     const frames = [
