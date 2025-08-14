@@ -185,8 +185,8 @@ class CommandHandler {
         errorMessage += '⏱️ *Batas Penggunaan Tercapai*\n_Server AI sedang sibuk melayani banyak permintaan._\n\n⏰ *Solusi:*\n• Tunggu 2-3 menit sebelum mencoba lagi\n• Gunakan perintah `/ping` untuk cek status';
       } else if (error.message.includes('400') || error.message.includes('invalid')) {
         errorMessage += '📝 *Format Permintaan Bermasalah*\n_Permintaan tidak dapat diproses oleh AI._\n\n💡 *Solusi:*\n• Gunakan bahasa yang lebih jelas\n• Hindari karakter khusus berlebihan\n• Coba dengan pertanyaan yang lebih spesifik';
-      } else if (error.message.includes('404')) {
-        errorMessage += '🔍 *Konten Tidak Ditemukan*\n_URL atau sumber yang diminta tidak tersedia._\n\n🌐 *Solusi:*\n• Periksa URL yang diberikan\n• Pastikan sumber masih aktif\n• Coba tanpa URL eksternal';
+      } else if (error.message.includes('404') || error.message.includes('not found')) {
+        errorMessage += '🔍 *URL Tidak Dapat Diakses*\n_Sumber atau URL yang diminta tidak dapat dijangkau._\n\n🌐 *Kemungkinan Penyebab:*\n• URL memerlukan login/authentication\n• Website memblokir akses automated\n• Server temporary unavailable\n• URL sudah tidak aktif\n\n💡 *Solusi:*\n• Pastikan URL dapat dibuka di browser normal\n• Coba dengan domain/website lain\n• Sertakan konten URL secara manual dalam pesan\n• Gunakan kata kunci umum untuk pencarian';
       } else {
         errorMessage += '⚙️ *Kesalahan Sistem Internal*\n_Terjadi gangguan pada sistem AI._\n\n🔧 *Solusi:*\n• Coba lagi dengan perintah sederhana\n• Hubungi admin jika masalah berlanjut\n• Gunakan `/status` untuk cek kesehatan sistem';
       }

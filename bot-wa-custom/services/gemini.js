@@ -140,107 +140,179 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     }
   }
 
-  // Enhanced URL validation dengan retry mechanism dan preprocessing
+  // Enhanced URL validation dengan improved reliability dan comprehensive error handling
   async validateUrl(url) {
-    // URL preprocessing untuk membersihkan dan normalize
+    // Smart URL preprocessing yang lebih permissive
     const cleanUrl = this.preprocessUrl(url);
     if (!cleanUrl) return false;
 
+    // Diverse user agents untuk menghindari blocking
     const userAgents = [
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+      'Mozilla/5.0 (Android 13; Mobile; rv:109.0) Gecko/109.0 Firefox/109.0'
     ];
 
-    // Retry mechanism dengan different strategies
-    for (let attempt = 1; attempt <= 3; attempt++) {
+    // Enhanced retry strategy dengan progressive fallback
+    const strategies = [
+      { method: 'head', timeout: 15000, description: 'Quick HEAD check' },
+      { method: 'get', timeout: 20000, description: 'Full GET request' },
+      { method: 'get', timeout: 30000, description: 'Extended timeout GET' }
+    ];
+
+    for (let attempt = 1; attempt <= strategies.length; attempt++) {
       try {
+        const strategy = strategies[attempt - 1];
         const userAgent = userAgents[(attempt - 1) % userAgents.length];
         
-        // Try HEAD first, then GET if HEAD fails
-        const methods = attempt === 1 ? ['head', 'get'] : ['get'];
+        logger.info(`🔍 URL validation attempt ${attempt}/${strategies.length} (${strategy.description}): ${cleanUrl}`);
         
-        for (const method of methods) {
-          try {
-            const config = {
-              method,
-              url: cleanUrl,
-              timeout: 8000 + (attempt * 2000), // Progressive timeout
-              maxRedirects: 5,
-              validateStatus: (status) => status < 500, // More permissive
-              headers: {
-                'User-Agent': userAgent,
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'id-ID,id;q=0.9,en;q=0.8',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'DNT': '1',
-                'Connection': 'keep-alive',
-                'Upgrade-Insecure-Requests': '1'
-              }
-            };
+        const config = {
+          method: strategy.method,
+          url: cleanUrl,
+          timeout: strategy.timeout,
+          maxRedirects: 10, // Increased redirects
+          validateStatus: (status) => status < 500, // Accept all client errors as valid
+          headers: {
+            'User-Agent': userAgent,
+            'Accept': strategy.method === 'head' 
+              ? '*/*' 
+              : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Upgrade-Insecure-Requests': '1',
+            'Connection': 'keep-alive'
+          }
+        };
 
-            const response = await axios(config);
-            
-            if (response.status >= 200 && response.status < 400) {
-              logger.info(`✅ URL validation success (attempt ${attempt}): ${cleanUrl}`);
-              return true;
-            } else if (response.status >= 400 && response.status < 500) {
-              logger.warn(`⚠️ URL client error ${response.status}: ${cleanUrl}`);
-              return false; // Client errors shouldn't be retried
-            }
-          } catch (methodError) {
-            if (method === 'head') continue; // Try GET if HEAD fails
-            throw methodError;
+        // Untuk certain domains, skip SSL verification
+        const relaxedDomains = ['blogspot.com', 'wordpress.com', 'medium.com', 'github.io'];
+        if (relaxedDomains.some(domain => cleanUrl.includes(domain))) {
+          config.httpsAgent = new (require('https').Agent)({ rejectUnauthorized: false });
+        }
+
+        const response = await axios(config);
+        
+        // Success criteria yang lebih comprehensive
+        if (response.status >= 200 && response.status < 400) {
+          logger.info(`✅ URL validation SUCCESS (${response.status}) - attempt ${attempt}: ${cleanUrl}`);
+          return true;
+        } else if (response.status >= 400 && response.status < 500) {
+          // Client errors - check if it's a real 404 or access restriction
+          if (response.status === 403 || response.status === 401) {
+            logger.warn(`🔒 URL requires authentication (${response.status}) but exists: ${cleanUrl}`);
+            return true; // URL exists but needs auth - still valid for AI processing
+          } else if (response.status === 404) {
+            logger.warn(`❌ URL not found (404): ${cleanUrl}`);
+            return false; // True 404
+          } else {
+            logger.warn(`⚠️ URL client error (${response.status}): ${cleanUrl}`);
+            // Continue to next attempt for other 4xx errors
           }
         }
-      } catch (error) {
-        logger.warn(`⚠️ URL validation attempt ${attempt}/3 failed for ${cleanUrl}: ${error.message}`);
         
-        if (attempt === 3) {
-          // Final attempt failed
-          const isNetworkError = error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT';
-          logger.error(`❌ URL completely invalid after all retries: ${cleanUrl}`, {
-            error: error.message,
-            code: error.code,
-            isNetworkError
+      } catch (error) {
+        const isLastAttempt = attempt === strategies.length;
+        const errorCode = error.code || 'UNKNOWN';
+        const errorMessage = error.message || 'Unknown error';
+        
+        logger.warn(`⚠️ URL validation attempt ${attempt}/${strategies.length} failed for ${cleanUrl}:`, {
+          error: errorMessage,
+          code: errorCode,
+          willRetry: !isLastAttempt
+        });
+        
+        // Specific error handling
+        if (errorCode === 'ENOTFOUND') {
+          logger.error(`❌ Domain not found: ${cleanUrl}`);
+          return false; // Don't retry DNS failures
+        } else if (errorCode === 'ECONNREFUSED') {
+          logger.error(`❌ Connection refused: ${cleanUrl}`);
+          return false; // Don't retry connection refused
+        }
+        
+        if (isLastAttempt) {
+          // Final attempt failed - comprehensive error classification
+          logger.error(`❌ URL validation completely failed after all attempts: ${cleanUrl}`, {
+            finalError: errorMessage,
+            finalCode: errorCode
           });
           return false;
         }
         
-        // Wait before retry with exponential backoff
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        // Progressive backoff dengan jitter
+        const backoffTime = Math.min(2000 * Math.pow(1.5, attempt - 1), 8000);
+        const jitter = Math.random() * 1000;
+        await new Promise(resolve => setTimeout(resolve, backoffTime + jitter));
       }
     }
     
     return false;
   }
 
-  // URL preprocessing untuk membersihkan dan normalize
+  // Enhanced URL preprocessing yang lebih smart dan permissive
   preprocessUrl(url) {
     try {
-      // Remove extra spaces dan characters
-      const cleaned = url.trim().replace(/[^\w\-._~:/?#[\]@!$&'()*+,;=%]/g, '');
+      // Enhanced cleaning - preserve more valid characters
+      let cleaned = url.trim();
       
-      // Validate basic URL structure
-      const urlPattern = /^https?:\/\/([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?$/i;
+      // Remove invisible/control characters but preserve valid URL chars
+      cleaned = cleaned.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+      
+      // Basic URL structure validation dengan improved regex
+      const urlPattern = /^https?:\/\/(?:[-\w.])+(?:\.[a-zA-Z]{2,})+(?::[0-9]+)?(?:\/[^\s]*)?$/i;
       if (!urlPattern.test(cleaned)) {
-        logger.warn(`⚠️ Invalid URL pattern: ${cleaned}`);
-        return null;
+        // Try to fix common URL issues
+        if (cleaned.startsWith('www.')) {
+          cleaned = 'https://' + cleaned;
+        } else if (cleaned.includes('.') && !cleaned.startsWith('http')) {
+          cleaned = 'https://' + cleaned;
+        }
+        
+        // Revalidate after fixing
+        if (!urlPattern.test(cleaned)) {
+          logger.warn(`⚠️ Invalid URL pattern after preprocessing: ${cleaned}`);
+          return null;
+        }
       }
       
-      // Create URL object for validation
+      // Create URL object for advanced validation
       const urlObj = new URL(cleaned);
       
-      // Block dangerous or unreliable domains
-      const blockedDomains = ['localhost', '127.0.0.1', '0.0.0.0', 'example.com', 'test.com'];
-      if (blockedDomains.includes(urlObj.hostname)) {
-        logger.warn(`⚠️ Blocked domain: ${urlObj.hostname}`);
+      // Relaxed domain blocking - only block obviously invalid ones
+      const blockedDomains = [
+        'localhost', '127.0.0.1', '0.0.0.0', '::1',
+        'example.com', 'example.org', 'example.net',
+        'test.com', 'test.org', 'test.net',
+        'invalid.com', 'fake.com'
+      ];
+      
+      if (blockedDomains.includes(urlObj.hostname.toLowerCase())) {
+        logger.warn(`⚠️ Blocked domain detected: ${urlObj.hostname}`);
         return null;
       }
       
+      // Additional domain validation
+      if (urlObj.hostname.includes('..') || urlObj.hostname.startsWith('.') || urlObj.hostname.endsWith('.')) {
+        logger.warn(`⚠️ Invalid domain format: ${urlObj.hostname}`);
+        return null;
+      }
+      
+      logger.info(`✅ URL preprocessing successful: ${urlObj.href}`);
       return urlObj.href;
+      
     } catch (error) {
-      logger.warn(`⚠️ URL preprocessing failed: ${url} - ${error.message}`);
+      logger.warn(`⚠️ URL preprocessing failed for: ${url}`, {
+        error: error.message,
+        errorType: error.constructor.name
+      });
       return null;
     }
   }
@@ -316,52 +388,91 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     let tools = [];
     let responseType = 'general';
     
-    // Deteksi dan validasi URL dengan regex yang lebih akurat
-    const urlRegex = /(https?:\/\/(?:[-\w.])+(?:\:[0-9]+)?(?:\/(?:[\w\/_.])*)?(?:\?(?:[\w&=%.])*)?(?:\#(?:[\w.])*)?)/gi;
+    // Enhanced URL detection dengan improved regex pattern
+    const urlRegex = /(https?:\/\/(?:[-\w.])+(?:\.[a-zA-Z]{2,})+(?::[0-9]+)?(?:\/[^\s]*)?)/gi;
     const urls = prompt.match(urlRegex);
     
     if (urls && urls.length > 0) {
-      // Enhanced URL validation dengan parallel processing
-      const validUrls = [];
-      const urlPromises = urls.map(async (url) => {
+      logger.info(`🔍 Detected ${urls.length} URL(s) for validation: ${urls.join(', ')}`);
+      
+      // Enhanced URL validation dengan comprehensive feedback
+      const urlValidationResults = [];
+      
+      for (const url of urls) {
         try {
+          logger.info(`⏳ Validating URL: ${url}`);
+          
           const isValid = await Promise.race([
             this.validateUrl(url),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('URL validation timeout')), 10000))
+            new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Validation timeout exceeded')), 25000)
+            )
           ]);
           
+          urlValidationResults.push({
+            url,
+            valid: isValid,
+            status: isValid ? 'success' : 'failed',
+            reason: isValid ? 'accessible' : 'not_accessible'
+          });
+          
           if (isValid) {
-            validUrls.push(url);
-            logger.info(`✅ URL valid: ${url}`);
-            return { url, valid: true };
+            logger.info(`✅ URL validation SUCCESS: ${url}`);
           } else {
-            logger.warn(`❌ URL tidak valid: ${url}`);
-            return { url, valid: false, reason: 'validation_failed' };
+            logger.warn(`❌ URL validation FAILED: ${url}`);
           }
+          
         } catch (urlError) {
-          logger.warn(`⚠️ URL validation error for ${url}: ${urlError.message}`);
-          return { url, valid: false, reason: urlError.message };
+          logger.error(`💥 URL validation ERROR for ${url}: ${urlError.message}`);
+          urlValidationResults.push({
+            url,
+            valid: false,
+            status: 'error',
+            reason: urlError.message.includes('timeout') ? 'timeout' : 'error'
+          });
         }
-      });
-
-      // Wait untuk semua URL validation selesai
-      const urlResults = await Promise.allSettled(urlPromises);
-      const successfulResults = urlResults
-        .filter(result => result.status === 'fulfilled' && result.value.valid)
-        .map(result => result.value.url);
+      }
       
-      if (successfulResults.length > 0) {
-        // Gunakan grounding dengan URL references (Gemini mendukung ini)
-        tools = [{ googleSearch: {} }]; // Primary tool for grounding
+      // Process validation results
+      const validUrls = urlValidationResults.filter(result => result.valid).map(result => result.url);
+      const invalidUrls = urlValidationResults.filter(result => !result.valid);
+      
+      if (validUrls.length > 0) {
+        // Use grounding dengan valid URLs
+        tools = [{ googleSearch: {} }];
         responseType = 'url';
         
-        // Tambahkan URL ke prompt context instead of tool
-        const urlContext = successfulResults.map((url, index) => `Sumber ${index + 1}: ${url}`).join('\n');
-        prompt = `${prompt}\n\nGunakan informasi dari sumber berikut untuk memberikan jawaban yang akurat:\n${urlContext}`;
+        // Enhanced context dengan URL validation feedback
+        let urlContext = `Sumber URL yang berhasil diverifikasi:\n`;
+        validUrls.forEach((url, index) => {
+          urlContext += `${index + 1}. ${url}\n`;
+        });
         
-        logger.info(`🔗 Menggunakan ${successfulResults.length} URL valid sebagai referensi context.`);
+        if (invalidUrls.length > 0) {
+          urlContext += `\nCatatan: ${invalidUrls.length} URL lainnya tidak dapat diakses saat ini.\n`;
+        }
+        
+        prompt = `${prompt}\n\n${urlContext}\nBerikan jawaban berdasarkan informasi dari sumber URL yang valid di atas.`;
+        
+        logger.info(`🔗 Using ${validUrls.length}/${urls.length} valid URLs for AI processing`);
+        
       } else {
-        logger.warn('⚠️ Tidak ada URL valid yang ditemukan, menggunakan Google Search mode.');
+        // Semua URL gagal validasi - berikan feedback detail
+        logger.warn(`⚠️ All ${urls.length} URLs failed validation, switching to search mode`);
+        
+        // Categorize failures untuk feedback yang lebih baik
+        const timeoutFailures = invalidUrls.filter(r => r.reason === 'timeout').length;
+        const accessFailures = invalidUrls.filter(r => r.reason === 'not_accessible').length;
+        const errorFailures = invalidUrls.filter(r => r.reason === 'error').length;
+        
+        // Enhanced prompt dengan explanation
+        let failureExplanation = `\n\nCatatan: URL yang diberikan tidak dapat diakses`;
+        if (timeoutFailures > 0) failureExplanation += ` (${timeoutFailures} timeout)`;
+        if (accessFailures > 0) failureExplanation += ` (${accessFailures} tidak tersedia)`;
+        if (errorFailures > 0) failureExplanation += ` (${errorFailures} error)`;
+        failureExplanation += `. Saya akan menjawab berdasarkan pengetahuan umum dan pencarian web.`;
+        
+        prompt = prompt + failureExplanation;
         tools = [{ googleSearch: {} }];
         responseType = 'search';
       }
@@ -534,7 +645,7 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
       
       invalid_request: '📝 **Format Tidak Valid**\n\nPermintaan Anda tidak dapat diproses dalam format saat ini.\n\n**Saran:**\n• Gunakan bahasa yang lebih jelas\n• Hindari karakter khusus berlebihan\n• Coba dengan kalimat yang lebih sederhana\n\n_Contoh: "Jelaskan tentang teknologi AI"_',
       
-      not_found: '🔍 **Konten Tidak Tersedia**\n\nSumber atau URL yang diminta tidak dapat diakses.\n\n**Solusi:**\n• Periksa kembali URL yang diberikan\n• Pastikan sumber masih aktif\n• Coba tanpa menyertakan URL\n\n_Gunakan kata kunci umum untuk pencarian._',
+      not_found: '🔍 **URL Tidak Dapat Diakses**\n\nSumber atau URL yang diminta tidak dapat dijangkau oleh sistem.\n\n**Kemungkinan Penyebab:**\n• URL memerlukan login/authentication\n• Website memblokir akses bot\n• Server sementara tidak available\n• URL sudah tidak aktif (404)\n\n**Solusi:**\n• Pastikan URL dapat dibuka di browser\n• Coba dengan URL dari domain lain\n• Gunakan kata kunci untuk pencarian umum\n• Sertakan konten/teks URL secara manual\n\n_AI akan tetap berusaha menjawab berdasarkan pengetahuan yang tersedia._',
       
       rate_limit: '⏱️ **Sistem Sedang Sibuk**\n\nTerlalu banyak permintaan sedang diproses saat ini.\n\n**Tunggu sebentar:**\n• Coba lagi dalam 2-3 menit\n• Gunakan `/status` untuk cek kondisi sistem\n• Pertanyaan sederhana mungkin lebih cepat diproses\n\n_Terima kasih atas kesabaran Anda._',
       
