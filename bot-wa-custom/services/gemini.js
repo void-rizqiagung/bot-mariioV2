@@ -1,7 +1,9 @@
+
 const logger = require('./logger');
 const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require('@google/generative-ai');
 const { GoogleGenAI } = require('@google/genai');
 const settings = require('../config/settings');
+const axios = require('axios');
 
 class GeminiService {
   constructor() {
@@ -14,16 +16,19 @@ class GeminiService {
       { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
       { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
     ];
+    
     this.generationConfig = {
       temperature: 0.8,
       topK: 40,
       topP: 0.95,
       maxOutputTokens: 8192,
     };
-this.tools = [
-    { codeExecution: {} },
-    { googleSearch: {} },
-  ];
+
+    this.tools = [
+      { codeExecution: {} },
+      { googleSearch: {} },
+    ];
+
     this.systemInstruction = `I. Persona Inti: The AI Concierge
 
 Profesional dan Berwibawa: Nada bicara Anda selalu tenang, sopan, dan menunjukkan kepercayaan diri yang didasarkan pada data. Hindari bahasa gaul, emoji, atau gaya bahasa informal. Sapa pengguna dengan "Anda", bukan "kamu".
@@ -135,34 +140,73 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     }
   }
 
-  // [FINAL DESIGN] Fungsi ini diubah untuk menghasilkan gaya "Ornate Deco"
-  formatOrnateDecoResponse(response, responseType = 'general', query = '') {
+  // Validasi URL dengan pengecekan status HTTP
+  async validateUrl(url) {
+    try {
+      const response = await axios.head(url, {
+        timeout: 5000,
+        validateStatus: (status) => status < 400,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
+      return response.status >= 200 && response.status < 400;
+    } catch (error) {
+      logger.warn(`🔗 URL validation failed for ${url}: ${error.message}`);
+      return false;
+    }
+  }
+
+  // Format response dengan desain bubble chat yang lebih menarik dan profesional
+  formatProfessionalChatBubble(response, responseType = 'general', query = '') {
     if (!response || !response.text) {
-      return 'Maaf, terjadi kegagalan saat memproses permintaan Anda.';
+      return '❌ *Maaf, Terjadi Kesalahan Sistem*\n\n_AI Concierge tidak dapat memproses permintaan Anda saat ini. Mohon coba beberapa saat lagi._';
     }
 
-    let header = 'HASIL ANALISIS';
-    if (responseType === 'search') header = 'HASIL RISET WEB';
-    if (responseType === 'url') header = 'ANALISIS TAUTAN';
+    // Header dengan desain yang lebih menarik
+    const headers = {
+      'general': '🧠 *AI CONCIERGE*',
+      'search': '🔍 *RISET WEB GLOBAL*',
+      'url': '📄 *ANALISIS KONTEN*'
+    };
 
-    let topic = '';
-    if (query) {
-        topic = `\n*Perihal:* ${responseType === 'search' ? 'Riset untuk' : 'Analisis'} "${query}"`;
+    const header = headers[responseType] || headers['general'];
+    
+    // Tambahkan konteks query jika ada
+    let contextInfo = '';
+    if (query && query.trim().length > 0) {
+      const truncatedQuery = query.length > 50 ? query.substring(0, 50) + '...' : query;
+      contextInfo = `\n┌─ _${truncatedQuery}_\n└─────────────────────\n\n`;
     }
 
-    let formattedText = `⊱ ─── {⋆} ${header} {⋆} ─── ⊰${topic}\n\n▸ ${response.text}`;
+    // Format konten utama dengan spacing yang baik
+    let formattedContent = response.text
+      .replace(/\*\*(.*?)\*\*/g, '*$1*')  // Convert markdown bold to WhatsApp bold
+      .replace(/\_(.*?)\_/g, '_$1_')       // Keep WhatsApp italic
+      .replace(/\n\n\n+/g, '\n\n')        // Remove excessive line breaks
+      .trim();
 
+    // Struktur bubble chat yang profesional
+    let bubbleMessage = `${header}\n${contextInfo}${formattedContent}`;
+
+    // Tambahkan referensi jika ada dengan format yang lebih menarik
     if (response.groundingAttributions && response.groundingAttributions.length > 0) {
-      formattedText += `\n\n❖ *Referensi*`;
+      bubbleMessage += `\n\n┌─────────────────────\n│ 📚 *SUMBER REFERENSI*\n└─────────────────────`;
+      
       response.groundingAttributions.forEach((source, index) => {
-        const title = source.web.title || 'Sumber Web';
-        const uri = source.web.uri;
-        formattedText += `\n\n  ${index + 1}. *${title}*\n     \`${uri}\``;
+        const title = source.web?.title || 'Sumber Terpercaya';
+        const uri = source.web?.uri;
+        if (uri) {
+          bubbleMessage += `\n\n${index + 1}️⃣ *${title}*\n   🔗 ${uri}`;
+        }
       });
     }
 
-    formattedText += `\n\n⊱ ─── { ❖ } ─── ⊰`;
-    return formattedText;
+    // Footer dengan branding
+    const responseTime = response.responseTime ? ` • ${response.responseTime}ms` : '';
+    bubbleMessage += `\n\n────────────────────\n_✨ Powered by AI Concierge${responseTime}_`;
+
+    return bubbleMessage;
   }
 
   async generateContextualResponse(prompt, options = {}) {
@@ -172,28 +216,46 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
 
     let tools = [];
     let responseType = 'general';
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    
+    // Deteksi dan validasi URL dengan regex yang lebih akurat
+    const urlRegex = /(https?:\/\/(?:[-\w.])+(?:\:[0-9]+)?(?:\/(?:[\w\/_.])*)?(?:\?(?:[\w&=%.])*)?(?:\#(?:[\w.])*)?)/gi;
     const urls = prompt.match(urlRegex);
-
-    if (urls) {
-      tools.push({ 'urlContext': { 'urls': urls } });
-      responseType = 'url';
-      logger.info('🔗 URL detected, using urlContext tool.');
+    
+    if (urls && urls.length > 0) {
+      // Validasi semua URL yang ditemukan
+      const validUrls = [];
+      for (const url of urls) {
+        const isValid = await this.validateUrl(url);
+        if (isValid) {
+          validUrls.push(url);
+          logger.info(`✅ URL valid: ${url}`);
+        } else {
+          logger.warn(`❌ URL tidak valid atau tidak dapat diakses: ${url}`);
+        }
+      }
+      
+      if (validUrls.length > 0) {
+        tools.push({ 'urlContext': { 'urls': validUrls } });
+        responseType = 'url';
+        logger.info(`🔗 Menggunakan ${validUrls.length} URL valid untuk konteks.`);
+      } else {
+        logger.warn('⚠️ Tidak ada URL valid yang ditemukan, menggunakan mode general.');
+      }
     } else if (options.useGrounding) {
       tools.push({ 'googleSearch': {} });
       responseType = 'search';
-      logger.info('🔍 Grounding enabled, using googleSearch tool.');
+      logger.info('🔍 Menggunakan Google Search untuk riset web.');
     }
 
     const startTime = Date.now();
+    
     try {
       const model = this.ai.getGenerativeModel({
         model: this.modelName,
         safetySettings: this.safetySettings,
         generationConfig: this.generationConfig,
         systemInstruction: this.systemInstruction,
-        tools: tools,
-        config: this.tools
+        tools: tools.length > 0 ? tools : undefined,
       });
 
       const result = await model.generateContent(prompt);
@@ -207,17 +269,44 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
         error: null,
       };
 
-      // Menggunakan fungsi formatting "Ornate Deco" yang baru
-      return this.formatOrnateDecoResponse(finalResponse, responseType, prompt);
+      // Log performance metrics
+      logger.info(`🎯 AI Response generated`, {
+        responseType,
+        responseTime: `${responseTime}ms`,
+        hasGrounding: !!response.groundingAttributions?.length,
+        tokensUsed: response.usageMetadata?.totalTokenCount || 'N/A'
+      });
+
+      // Gunakan format bubble chat yang lebih profesional
+      return this.formatProfessionalChatBubble(finalResponse, responseType, prompt);
 
     } catch (error) {
-      logger.error('💥 AI response generation failed', { error: error.message });
-      return '❌ *Maaf, Terjadi Kesalahan*\n\nSistem AI tidak dapat memproses permintaan Anda saat ini. Mohon coba beberapa saat lagi.';
+      logger.error('💥 AI response generation failed', { 
+        error: error.message,
+        responseTime: `${Date.now() - startTime}ms`,
+        prompt: prompt.substring(0, 100) + '...'
+      });
+      
+      // Error handling yang lebih informatif
+      if (error.message.includes('400')) {
+        return '❌ *Permintaan Tidak Valid*\n\n_Format permintaan tidak sesuai. Mohon periksa kembali input Anda._\n\n💡 *Tip:* Gunakan bahasa yang lebih jelas dan spesifik.';
+      } else if (error.message.includes('404')) {
+        return '❌ *Sumber Tidak Ditemukan*\n\n_Konten yang diminta tidak dapat ditemukan atau sudah tidak tersedia._\n\n💡 *Tip:* Periksa kembali URL atau coba kata kunci yang berbeda.';
+      } else if (error.message.includes('rate limit')) {
+        return '⏱️ *Batas Penggunaan Tercapai*\n\n_Sistem sedang sibuk. Mohon tunggu beberapa saat sebelum mencoba lagi._';
+      } else {
+        return '❌ *Maaf, Terjadi Kesalahan*\n\n_Sistem AI tidak dapat memproses permintaan Anda saat ini._\n\n🔄 Silakan coba lagi dalam beberapa saat.';
+      }
     }
   }
 
-  isAvailable() { return !!this.ai; }
-  getModel() { return this.modelName; }
+  isAvailable() { 
+    return !!this.ai; 
+  }
+  
+  getModel() { 
+    return this.modelName; 
+  }
 }
 
 module.exports = new GeminiService();

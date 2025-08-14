@@ -61,14 +61,93 @@ class CommandHandler {
     const chatId = message.key.remoteJid;
     const prompt = args.join(' ');
 
-    if (!prompt) {
-      return await whatsappService.sendTextMessage(chatId, '❓ *Perintah Tidak Lengkap*\n*Contoh:* `/ai jelaskan tentang API`');
+    // Validasi input yang lebih comprehensive
+    if (!prompt || prompt.trim().length === 0) {
+      return await whatsappService.sendTextMessage(chatId, 
+        '❓ *Perintah Tidak Lengkap*\n\n' +
+        '📝 *Contoh penggunaan:*\n' +
+        '• `/ai jelaskan tentang kecerdasan buatan`\n' +
+        '• `/ai bagaimana cara kerja blockchain?`\n' +
+        '• `/ai analisis tren teknologi 2024`\n\n' +
+        '💡 *Tip:* Semakin spesifik pertanyaan, semakin akurat jawaban yang diberikan.'
+      );
     }
 
-    const loadingAnimation = await whatsappService.sendAnimatedLoadingMessage(chatId, 'AI Concierge sedang berpikir');
-    const responseText = await geminiService.generateContextualResponse(prompt, { userName: user.name });
+    // Deteksi jenis permintaan untuk optimasi response
+    const isQuestionPrompt = /^(apa|bagaimana|mengapa|kapan|dimana|siapa|berapa)/i.test(prompt);
+    const hasUrl = /(https?:\/\/[^\s]+)/g.test(prompt);
+    
+    // Indikator typing yang lebih natural
+    await whatsappService.sendPresenceUpdate('composing', chatId);
+    
+    // Loading message yang dinamis berdasarkan jenis permintaan
+    let loadingMessage;
+    if (hasUrl) {
+      loadingMessage = 'AI sedang menganalisis konten dari URL';
+    } else if (isQuestionPrompt) {
+      loadingMessage = 'AI sedang mencari jawaban terbaik';
+    } else {
+      loadingMessage = 'AI Concierge sedang memproses permintaan';
+    }
+    
+    const loadingAnimation = await whatsappService.sendAnimatedLoadingMessage(chatId, loadingMessage);
+    
+    try {
+      // Enhanced options berdasarkan konteks
+      const aiOptions = {
+        userName: user.name || 'User',
+        useGrounding: hasUrl || isQuestionPrompt, // Gunakan grounding untuk URL atau pertanyaan
+        maxRetries: 2
+      };
+
+      // Generate response dengan error handling
+      const responseText = await geminiService.generateContextualResponse(prompt, aiOptions);
+      
+      // Stop loading animation dan kirim response
       loadingAnimation.stop();
-    await whatsappService.sendMessage(chatId, { edit: loadingAnimation.message.key, text: responseText });
+      await whatsappService.sendPresenceUpdate('available', chatId);
+      
+      // Kirim response dengan edit message untuk performa yang lebih baik
+      await whatsappService.sendMessage(chatId, { 
+        edit: loadingAnimation.message.key, 
+        text: responseText 
+      });
+
+      // Log interaksi untuk analytics
+      logger.info('🤖 AI Interaction completed', {
+        userId: user.id || 'unknown',
+        userName: user.name || 'unknown',
+        promptLength: prompt.length,
+        hasUrl: hasUrl,
+        isQuestion: isQuestionPrompt
+      });
+
+    } catch (error) {
+      // Error handling yang lebih informatif
+      loadingAnimation.stop();
+      await whatsappService.sendPresenceUpdate('available', chatId);
+      
+      logger.error('💥 AI command failed', { 
+        error: error.message, 
+        userId: user.id,
+        prompt: prompt.substring(0, 100) + '...'
+      });
+      
+      let errorMessage = '❌ *Gagal Memproses Permintaan*\n\n';
+      
+      if (error.message.includes('rate limit')) {
+        errorMessage += '_Sistem sedang sibuk. Mohon tunggu beberapa saat sebelum mencoba lagi._\n\n⏰ *Estimasi waktu tunggu:* 1-2 menit';
+      } else if (error.message.includes('network')) {
+        errorMessage += '_Terjadi masalah koneksi. Mohon periksa koneksi internet Anda._\n\n🔄 *Solusi:* Coba lagi dalam beberapa saat';
+      } else {
+        errorMessage += '_Terjadi kesalahan sistem. Tim teknis telah diberitahu._\n\n💡 *Alternatif:* Coba dengan kata kunci yang lebih sederhana';
+      }
+      
+      await whatsappService.sendMessage(chatId, { 
+        edit: loadingAnimation.message.key, 
+        text: errorMessage 
+      });
+    }
   }
   
   async handleSearch(sock, message, args, user) {
