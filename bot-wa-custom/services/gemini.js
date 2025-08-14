@@ -140,20 +140,108 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     }
   }
 
-  // Validasi URL dengan pengecekan status HTTP
+  // Enhanced URL validation dengan retry mechanism dan preprocessing
   async validateUrl(url) {
-    try {
-      const response = await axios.head(url, {
-        timeout: 5000,
-        validateStatus: (status) => status < 400,
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    // URL preprocessing untuk membersihkan dan normalize
+    const cleanUrl = this.preprocessUrl(url);
+    if (!cleanUrl) return false;
+
+    const userAgents = [
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    ];
+
+    // Retry mechanism dengan different strategies
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const userAgent = userAgents[(attempt - 1) % userAgents.length];
+        
+        // Try HEAD first, then GET if HEAD fails
+        const methods = attempt === 1 ? ['head', 'get'] : ['get'];
+        
+        for (const method of methods) {
+          try {
+            const config = {
+              method,
+              url: cleanUrl,
+              timeout: 8000 + (attempt * 2000), // Progressive timeout
+              maxRedirects: 5,
+              validateStatus: (status) => status < 500, // More permissive
+              headers: {
+                'User-Agent': userAgent,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'id-ID,id;q=0.9,en;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1'
+              }
+            };
+
+            const response = await axios(config);
+            
+            if (response.status >= 200 && response.status < 400) {
+              logger.info(`✅ URL validation success (attempt ${attempt}): ${cleanUrl}`);
+              return true;
+            } else if (response.status >= 400 && response.status < 500) {
+              logger.warn(`⚠️ URL client error ${response.status}: ${cleanUrl}`);
+              return false; // Client errors shouldn't be retried
+            }
+          } catch (methodError) {
+            if (method === 'head') continue; // Try GET if HEAD fails
+            throw methodError;
+          }
         }
-      });
-      return response.status >= 200 && response.status < 400;
+      } catch (error) {
+        logger.warn(`⚠️ URL validation attempt ${attempt}/3 failed for ${cleanUrl}: ${error.message}`);
+        
+        if (attempt === 3) {
+          // Final attempt failed
+          const isNetworkError = error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT';
+          logger.error(`❌ URL completely invalid after all retries: ${cleanUrl}`, {
+            error: error.message,
+            code: error.code,
+            isNetworkError
+          });
+          return false;
+        }
+        
+        // Wait before retry with exponential backoff
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      }
+    }
+    
+    return false;
+  }
+
+  // URL preprocessing untuk membersihkan dan normalize
+  preprocessUrl(url) {
+    try {
+      // Remove extra spaces dan characters
+      const cleaned = url.trim().replace(/[^\w\-._~:/?#[\]@!$&'()*+,;=%]/g, '');
+      
+      // Validate basic URL structure
+      const urlPattern = /^https?:\/\/([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?$/i;
+      if (!urlPattern.test(cleaned)) {
+        logger.warn(`⚠️ Invalid URL pattern: ${cleaned}`);
+        return null;
+      }
+      
+      // Create URL object for validation
+      const urlObj = new URL(cleaned);
+      
+      // Block dangerous or unreliable domains
+      const blockedDomains = ['localhost', '127.0.0.1', '0.0.0.0', 'example.com', 'test.com'];
+      if (blockedDomains.includes(urlObj.hostname)) {
+        logger.warn(`⚠️ Blocked domain: ${urlObj.hostname}`);
+        return null;
+      }
+      
+      return urlObj.href;
     } catch (error) {
-      logger.warn(`🔗 URL validation failed for ${url}: ${error.message}`);
-      return false;
+      logger.warn(`⚠️ URL preprocessing failed: ${url} - ${error.message}`);
+      return null;
     }
   }
 
@@ -233,37 +321,55 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
     const urls = prompt.match(urlRegex);
     
     if (urls && urls.length > 0) {
-      // Validasi semua URL dengan timeout dan retry
+      // Enhanced URL validation dengan parallel processing
       const validUrls = [];
-      for (const url of urls) {
+      const urlPromises = urls.map(async (url) => {
         try {
           const isValid = await Promise.race([
             this.validateUrl(url),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('URL validation timeout')), 5000))
+            new Promise((_, reject) => setTimeout(() => reject(new Error('URL validation timeout')), 10000))
           ]);
           
           if (isValid) {
             validUrls.push(url);
             logger.info(`✅ URL valid: ${url}`);
+            return { url, valid: true };
           } else {
             logger.warn(`❌ URL tidak valid: ${url}`);
+            return { url, valid: false, reason: 'validation_failed' };
           }
         } catch (urlError) {
           logger.warn(`⚠️ URL validation error for ${url}: ${urlError.message}`);
+          return { url, valid: false, reason: urlError.message };
         }
-      }
+      });
+
+      // Wait untuk semua URL validation selesai
+      const urlResults = await Promise.allSettled(urlPromises);
+      const successfulResults = urlResults
+        .filter(result => result.status === 'fulfilled' && result.value.valid)
+        .map(result => result.value.url);
       
-      if (validUrls.length > 0) {
-        tools.push({ 'urlContext': { 'urls': validUrls } });
+      if (successfulResults.length > 0) {
+        // Gunakan grounding dengan URL references (Gemini mendukung ini)
+        tools = [{ googleSearch: {} }]; // Primary tool for grounding
         responseType = 'url';
-        logger.info(`🔗 Menggunakan ${validUrls.length} URL valid untuk konteks.`);
+        
+        // Tambahkan URL ke prompt context instead of tool
+        const urlContext = successfulResults.map((url, index) => `Sumber ${index + 1}: ${url}`).join('\n');
+        prompt = `${prompt}\n\nGunakan informasi dari sumber berikut untuk memberikan jawaban yang akurat:\n${urlContext}`;
+        
+        logger.info(`🔗 Menggunakan ${successfulResults.length} URL valid sebagai referensi context.`);
       } else {
-        logger.warn('⚠️ Tidak ada URL valid yang ditemukan, menggunakan mode general.');
+        logger.warn('⚠️ Tidak ada URL valid yang ditemukan, menggunakan Google Search mode.');
+        tools = [{ googleSearch: {} }];
+        responseType = 'search';
       }
     } else if (useGrounding) {
-      tools.push({ 'googleSearch': {} });
+      // Enhanced Google Search configuration
+      tools = [{ googleSearch: {} }];
       responseType = 'search';
-      logger.info('🔍 Menggunakan Google Search untuk riset web.');
+      logger.info('🔍 Menggunakan Google Search untuk riset web mendalam.');
     }
 
     const startTime = Date.now();
@@ -364,12 +470,45 @@ Dengan mengikuti prompt yang diperbarui ini, bot akan mampu memberikan respons y
         return this.generateFallbackResponse(prompt, 'network');
       }
       throw new Error('Network connection failed - please check internet connectivity');
-    } else if (lastError.message.includes('400') || lastError.message.includes('invalid')) {
+    } else if (lastError.message.includes('400') || lastError.message.includes('invalid') || lastError.message.includes('Bad Request')) {
+      logger.warn('🚫 Invalid request detected, attempting fallback without tools');
+      
+      // Try again without tools as fallback
+      if (tools.length > 0) {
+        try {
+          const simpleModel = this.ai.getGenerativeModel({
+            model: this.modelName,
+            safetySettings: this.safetySettings,
+            generationConfig: { ...this.generationConfig, maxOutputTokens: 2048 },
+            systemInstruction: this.systemInstruction
+            // No tools - simple generation
+          });
+          
+          const simpleResult = await simpleModel.generateContent(prompt.replace(/\n\nGunakan informasi dari sumber berikut[\s\S]*/, ''));
+          const simpleResponse = simpleResult.response;
+          
+          if (simpleResponse && simpleResponse.text && simpleResponse.text().trim()) {
+            const fallbackResponse = {
+              text: simpleResponse.text(),
+              responseTime: Date.now() - startTime,
+              groundingAttributions: null,
+              error: 'fallback_mode',
+              attempt: maxRetries + 1
+            };
+            
+            logger.info('✅ Fallback generation successful without tools');
+            return this.formatProfessionalChatBubble(fallbackResponse, 'general', prompt);
+          }
+        } catch (fallbackError) {
+          logger.error('💥 Fallback generation also failed', { error: fallbackError.message });
+        }
+      }
+      
       if (fallbackMode) {
         return this.generateFallbackResponse(prompt, 'invalid_request');
       }
       throw new Error('Invalid request format - please rephrase your question');
-    } else if (lastError.message.includes('404')) {
+    } else if (lastError.message.includes('404') || lastError.message.includes('Not Found')) {
       if (fallbackMode) {
         return this.generateFallbackResponse(prompt, 'not_found');
       }
