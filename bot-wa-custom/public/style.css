@@ -1,0 +1,375 @@
+/* Custom styles for WhatsApp Bot Dashboard */
+
+:root {
+  --sidebar-width: 240px;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --activity-max-height: 400px;
+}
+
+/* Sidebar Styling */
+.sidebar {
+  position: fixed;
+  top: 56px; /* Height of navbar */
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0;
+  box-shadow: inset -1px 0 0 var(--border-color);
+  width: var(--sidebar-width);
+  overflow-y: auto;
+}
+
+.sidebar .nav-link {
+  color: rgba(255, 255, 255, 0.75);
+  padding: 0.75rem 1rem;
+  border-radius: 0;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link.active {
+  color: #fff;
+  background-color: rgba(13, 110, 253, 0.25);
+  border-left: 3px solid #0d6efd;
+}
+
+.sidebar .nav-link i {
+  width: 16px;
+  height: 16px;
+}
+
+/* Main content offset */
+main {
+  margin-left: var(--sidebar-width);
+  padding-top: 1rem;
+}
+
+/* Status cards animations */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Activity feed styling */
+#activityFeed {
+  max-height: var(--activity-max-height);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+#activityFeed::-webkit-scrollbar {
+  width: 6px;
+}
+
+#activityFeed::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#activityFeed::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+#activityFeed::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Activity items */
+.activity-item {
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.activity-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.activity-item.info {
+  border-left-color: #0dcaf0;
+}
+
+.activity-item.success {
+  border-left-color: #198754;
+}
+
+.activity-item.warning {
+  border-left-color: #ffc107;
+}
+
+.activity-item.error {
+  border-left-color: #dc3545;
+}
+
+/* Logs container styling */
+#logsContainer {
+  background-color: #1a1a1a;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+  font-size: 0.825rem;
+  line-height: 1.4;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+#logsContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+#logsContainer::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+#logsContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.log-entry {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  word-break: break-word;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+/* Progress bars */
+.progress {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Badge customizations */
+.badge {
+  font-size: 0.7em;
+  font-weight: 500;
+}
+
+/* Connection status indicator */
+#connectionStatus {
+  font-size: 0.8rem;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Chart containers */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+}
+
+/* Table responsiveness */
+.table-responsive {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.table-responsive::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+/* Loading animations */
+.loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Feature status grid */
+.feature-status {
+  padding: 1rem;
+  text-align: center;
+  border-radius: 0.375rem;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.feature-status:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+/* Pairing code styling */
+#pairingCode {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Courier New', monospace;
+  letter-spacing: 0.2em;
+  font-weight: bold;
+  color: #212529;
+  background-color: #fff3cd;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: 2px dashed #856404;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    top: 0;
+  }
+  
+  main {
+    margin-left: 0;
+  }
+  
+  .navbar-brand {
+    font-size: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem 0.75rem;
+  }
+  
+  #activityFeed {
+    max-height: 250px;
+  }
+  
+  .chart-container {
+    height: 150px;
+  }
+}
+
+@media (max-width: 576px) {
+  .container-fluid {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+  .btn-group-vertical .btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+/* Dark theme enhancements */
+.navbar-dark {
+  background-color: #1a1a1a !important;
+}
+
+.bg-dark {
+  background-color: #212529 !important;
+}
+
+.border-bottom {
+  border-bottom-color: var(--border-color) !important;
+}
+
+/* Custom alert styling */
+.alert {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.alert-warning {
+  background-color: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border-left: 4px solid #ffc107;
+}
+
+/* Button enhancements */
+.btn {
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-outline-primary:hover,
+.btn-outline-secondary:hover,
+.btn-outline-warning:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Status text styling */
+.status-text {
+  font-weight: 600;
+}
+
+/* Utility classes */
+.text-shadow {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.border-gradient {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #0d6efd, #20c997) 1;
+}
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Scrollbar styling for all containers */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}

@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/runner/workspace/bot-wa-custom/logs/.814d9795e994830a94e74af0e360579da869d511-audit.json",
+    "files": [
+        {
+            "date": 1755202174984,
+            "name": "/home/runner/workspace/bot-wa-custom/logs/combined-2025-08-14.log",
+            "hash": "3016460266a74f6e2c6d4720e253b5debfbe8e94b3892654adf010702d25b09b"
+        }
+    ],
+    "hashType": "sha256"
+}
