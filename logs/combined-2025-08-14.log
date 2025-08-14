@@ -1,0 +1,252 @@
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 20:09:34"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 20:09:34"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:09:35"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 20:09:36"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 20:09:36"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 20:09:36"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 20:09:36"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 20:09:37"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 20:09:37"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 20:09:38"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 20:09:38"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 20:09:38","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 20:09:38","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 20:09:38","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 20:09:38","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 20:09:38","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 20:09:38","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 20:09:38"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:09:38"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 20:09:38"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 20:09:38"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 20:09:38"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 20:09:39"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 20:09:39"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 20:10:52"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 20:10:52"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:10:53"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 20:10:53"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 20:10:53"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 20:10:53"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 20:10:53"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 20:10:58"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 20:10:58"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 20:11:02"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 20:11:02"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 20:11:03","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 20:11:03","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 20:11:03","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 20:11:03","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 20:11:03","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 20:11:03","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 20:11:03"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:11:03"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 20:11:03"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 20:11:03"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 20:11:03"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 20:11:04"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 20:11:04"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 20:20:45"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 20:20:45"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:20:46"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 20:20:46"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 20:20:46"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 20:20:46"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 20:20:46"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 20:20:48","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 20:20:48","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 20:20:48","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 20:20:48","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 20:20:48","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 20:20:48","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 20:20:48"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 20:20:50"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 20:20:50"}
+{"level":"info","message":"🛑 SIGTERM received, shutting down gracefully","timestamp":"2025-08-14 20:30:20"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 20:30:22"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 20:30:22"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:30:22"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 20:30:23"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 20:30:23"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 20:30:23"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 20:30:23"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 20:30:24"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 20:30:24"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 20:30:25"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 20:30:25"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 20:30:25","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 20:30:25","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 20:30:25","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 20:30:25","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 20:30:25","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 20:30:25","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 20:30:25"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:30:25"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 20:30:25"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 20:30:25"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 20:30:25"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 20:30:26"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 20:30:26"}
+{"command":"/ai","error":"whatsappService.sendPresenceUpdate is not a function","level":"error","message":"💥 Command execution failed","timestamp":"2025-08-14 20:34:39"}
+{"level":"info","message":"🛑 SIGTERM received, shutting down gracefully","timestamp":"2025-08-14 20:35:08"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 20:48:38"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 20:48:38"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:48:49"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 20:48:50"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 20:48:50"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 20:48:50"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 20:48:50"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 20:48:51"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 20:48:51"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 20:48:52"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 20:48:52"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 20:48:52","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 20:48:52","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 20:48:52","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 20:48:52","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 20:48:52","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 20:48:52","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 20:48:52"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:48:52"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 20:48:52"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 20:48:52"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 20:48:52"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 20:48:54"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 20:48:54"}
+{"hasGrounding":false,"level":"info","message":"🎯 AI Response generated","responseTime":"7188ms","responseType":"general","timestamp":"2025-08-14 20:49:18","tokensUsed":2317}
+{"hasUrl":false,"isQuestion":false,"level":"info","message":"🤖 AI Interaction completed","promptLength":61,"timestamp":"2025-08-14 20:49:18","userId":4,"userName":"$ ./rizqi-agung.bin"}
+{"level":"info","message":"🛑 SIGTERM received, shutting down gracefully","timestamp":"2025-08-14 20:57:35"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 20:57:38"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 20:57:38"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:57:39"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 20:57:39"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 20:57:39"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 20:57:39"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 20:57:39"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 20:57:41","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 20:57:41","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 20:57:41","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 20:57:41","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 20:57:41","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 20:57:41","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 20:57:41"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 20:57:43"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 20:57:43"}
+{"hasTools":false,"level":"info","message":"🔄 AI Generation attempt 1/3","prompt":"search makanan khas cirebon sertakan 3 link sumber...","responseType":"general","timestamp":"2025-08-14 20:58:53"}
+{"attempt":"1/3","hasGrounding":false,"level":"info","message":"🎯 AI Response generated successfully","responseLength":2084,"responseTime":"9715ms","responseType":"general","timestamp":"2025-08-14 20:59:02","tokensUsed":2906}
+{"hasUrl":false,"isQuestion":false,"level":"info","message":"🤖 AI Interaction completed","promptLength":61,"responseLength":2415,"timestamp":"2025-08-14 20:59:03","userId":4,"userName":"$ ./rizqi-agung.bin"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 21:20:50"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 21:20:50"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 21:20:52"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 21:20:53"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 21:20:53"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 21:20:53"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 21:20:53"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 21:20:55","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 21:20:55","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 21:20:55","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 21:20:55","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 21:20:55","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 21:20:55","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 21:20:55"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 21:20:57"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 21:20:57"}
+{"hasTools":false,"level":"info","message":"🔄 AI Generation attempt 1/3","prompt":"search makanan khas cirebon sertakan 3 link sumber...","responseType":"general","timestamp":"2025-08-14 21:21:25"}
+{"attempt":"1/3","hasGrounding":false,"level":"info","message":"🎯 AI Response generated successfully","responseLength":2270,"responseTime":"10631ms","responseType":"general","timestamp":"2025-08-14 21:21:36","tokensUsed":3090}
+{"hasUrl":false,"isQuestion":false,"level":"info","message":"🤖 AI Interaction completed","promptLength":61,"responseLength":2602,"timestamp":"2025-08-14 21:21:36","userId":4,"userName":"$ ./rizqi-agung.bin"}
+{"level":"info","message":"🛑 SIGTERM received, shutting down gracefully","timestamp":"2025-08-14 21:26:09"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 21:26:10"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 21:26:10"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 21:26:11"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 21:26:12"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 21:26:12"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 21:26:12"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 21:26:12"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 21:26:13"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 21:26:13"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 21:26:14"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 21:26:14"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 21:26:14","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 21:26:14","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 21:26:14","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 21:26:14","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 21:26:14","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 21:26:14","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 21:26:14"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 21:26:14"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 21:26:14"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 21:26:14"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 21:26:14"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 21:26:16"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 21:26:16"}
+{"level":"info","message":"🔍 Menggunakan Google Search untuk riset web mendalam.","timestamp":"2025-08-14 21:27:30"}
+{"hasTools":true,"level":"info","message":"🔄 AI Generation attempt 1/3","prompt":"search makanan khas cirebon sertakan 3 link sumber...","responseType":"search","timestamp":"2025-08-14 21:27:30"}
+{"attempt":"1/3","hasGrounding":false,"level":"info","message":"🎯 AI Response generated successfully","responseLength":2176,"responseTime":"12286ms","responseType":"search","timestamp":"2025-08-14 21:27:42","tokensUsed":2258}
+{"hasUrl":false,"isQuestion":false,"level":"info","message":"🤖 AI Interaction completed","promptLength":61,"responseLength":2511,"timestamp":"2025-08-14 21:27:43","userId":4,"userName":"$ ./rizqi-agung.bin"}
+{"level":"info","message":"🛑 SIGTERM received, shutting down gracefully","timestamp":"2025-08-14 21:28:35"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 21:41:12"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 21:41:12"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 21:41:13"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 21:41:14"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 21:41:14"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 21:41:14"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 21:41:14"}
+{"level":"info","message":"✅ PostgreSQL connected successfully","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"🔄 Running database migrations...","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"✅ Migrations completed successfully","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"✅ Database initialized successfully","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"⚙️ Setting updated","path":"bot_name","timestamp":"2025-08-14 21:41:16","value":"WhatsApp AI Bot"}
+{"level":"info","message":"⚙️ Setting updated","path":"welcome_message","timestamp":"2025-08-14 21:41:16","value":"👋 Halo! Saya adalah AI assistant WhatsApp. Ketik /help untuk melihat daftar perintah."}
+{"level":"info","message":"⚙️ Setting updated","path":"ai_enabled","timestamp":"2025-08-14 21:41:16","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"media_download_enabled","timestamp":"2025-08-14 21:41:16","value":"true"}
+{"level":"info","message":"⚙️ Setting updated","path":"rate_limit_messages","timestamp":"2025-08-14 21:41:16","value":"10"}
+{"level":"info","message":"⚙️ Setting updated","path":"max_file_size_mb","timestamp":"2025-08-14 21:41:16","value":"50"}
+{"level":"info","message":"⚙️ Settings updated from database","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"🤖 Menginisialisasi bot WhatsApp...","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"📱 Menggunakan WhatsApp versi 2.3000.1023223821, Terbaru: true","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"✅ Inisialisasi bot WhatsApp selesai.","timestamp":"2025-08-14 21:41:16"}
+{"level":"info","message":"✅ WhatsApp terhubung dan aktif!","timestamp":"2025-08-14 21:41:18"}
+{"level":"info","message":"✨ Status bot diatur ke \"available\" (offline).","timestamp":"2025-08-14 21:41:18"}
+{"level":"info","message":"🔍 Menggunakan Google Search untuk riset web mendalam.","timestamp":"2025-08-14 21:43:37"}
+{"hasTools":true,"level":"info","message":"🔄 AI Generation attempt 1/3","prompt":"siapakah pencipta TSMC...","responseType":"search","timestamp":"2025-08-14 21:43:37"}
+{"attempt":"1/3","hasGrounding":false,"level":"info","message":"🎯 AI Response generated successfully","responseLength":3056,"responseTime":"14601ms","responseType":"search","timestamp":"2025-08-14 21:43:52","tokensUsed":2974}
+{"hasUrl":false,"isQuestion":true,"level":"info","message":"🤖 AI Interaction completed","promptLength":22,"responseLength":3965,"timestamp":"2025-08-14 21:43:55","userId":4,"userName":"$ ./rizqi-agung.bin"}
+{"level":"info","message":"🔍 Menggunakan Google Search untuk riset web mendalam.","timestamp":"2025-08-14 21:55:50"}
+{"hasTools":true,"level":"info","message":"🔄 AI Generation attempt 1/3","prompt":"apaa teknologi dan fitur ai gratis untuk bot whats...","responseType":"search","timestamp":"2025-08-14 21:55:50"}
+{"attempt":"1/3","hasGrounding":false,"level":"info","message":"🎯 AI Response generated successfully","responseLength":5496,"responseTime":"11103ms","responseType":"search","timestamp":"2025-08-14 21:56:02","tokensUsed":2984}
+{"hasUrl":false,"isQuestion":true,"level":"info","message":"🤖 AI Interaction completed","promptLength":118,"responseLength":6423,"timestamp":"2025-08-14 21:56:05","userId":4,"userName":"$ ./rizqi-agung.bin"}
+{"level":"info","message":"⏰ Waktunya mengirim jadwal harian...","timestamp":"2025-08-14 22:00:00"}
+{"level":"info","message":"✅ Jadwal harian untuk hari Jum'at berhasil dikirim.","timestamp":"2025-08-14 22:00:00"}
+{"level":"info","message":"🛑 SIGTERM received, shutting down gracefully","timestamp":"2025-08-14 22:05:26"}
+{"level":"info","message":"🚀 Starting WhatsApp Bot...","timestamp":"2025-08-14 22:05:31"}
+{"level":"info","message":"⚙️ Settings validated successfully","timestamp":"2025-08-14 22:05:31"}
+{"level":"info","message":"✅ Gemini AI (gemini-2.5-flash) initialized successfully","timestamp":"2025-08-14 22:05:32"}
+{"level":"info","message":"✅ Penjadwal pesan harian (cron job) berhasil diaktifkan.","timestamp":"2025-08-14 22:05:32"}
+{"level":"info","message":"🌐 Dashboard available at http://0.0.0.0:5000","timestamp":"2025-08-14 22:05:32"}
+{"aiEnabled":true,"botName":"mariio4chunk AI","level":"info","message":"⚙️ Bot settings loaded","privateOnly":true,"timestamp":"2025-08-14 22:05:32"}
+{"level":"info","message":"🗄️ Initializing PostgreSQL connection...","timestamp":"2025-08-14 22:05:32"}
